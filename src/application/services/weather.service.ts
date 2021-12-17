@@ -6,7 +6,7 @@ import { mapToCoordinates } from "../location.mapper";
 const API_VERSION = "2.5";
 const BASE_URL = `https://api.openweathermap.org/data/${API_VERSION}`;
 
-export const WeatherService = {
+export const WeatherService: IWeatherService = {
     async getWeeklyWeather(city, country) {
         try {
             const coordsData = await GeoLocationService.getCoordsByCityAndCountry(city, country);
