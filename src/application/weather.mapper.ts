@@ -1,7 +1,8 @@
 import { WeatherModel } from "./models/weather.model";
 import { CurrentWeatherModel } from "./models/current-weather.model";
+import { PlainObject } from '../shared/interfaces/plain-object';
 
-export function mapToWeatherModel(requestObj) {
+export function mapToWeatherModel(requestObj: PlainObject) {
     let weatherModel = new WeatherModel();
     weatherModel.temp = requestObj.main.temp;
     weatherModel.humidity = requestObj.main.humidity;
@@ -13,7 +14,7 @@ export function mapToWeatherModel(requestObj) {
     return weatherModel;
 }
 
-export function mapToCurrentWeatherModel(requestObj) {
+export function mapToCurrentWeatherModel(requestObj: PlainObject) {
     let currentWeatherModel = new CurrentWeatherModel();
     currentWeatherModel.description = requestObj.weather[0].main;
     currentWeatherModel.forecast = requestObj.weather[0].description;
