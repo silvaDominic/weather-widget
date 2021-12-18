@@ -1,4 +1,5 @@
 import { CoordinatesModel } from "../models/coordinates.model";
+import axios from 'axios';
 const GEOLOCATION_BASE_URL = "https://nominatim.openstreetmap.org/search.php";
 
 export const GeoLocationService = {
@@ -12,31 +13,33 @@ export const GeoLocationService = {
         }
     },
 
-    async getCoordsByCityAndCountry(city, country) {
-        if (city !== "" && country !== "") {
+    async getCoordsByCityAndCountry(city: string, country: string) {
+        if (isValidParams(city, country)) {
             city = formatCity(city);
             country = formatCountry(country);
             try {
-                const result = await fetch(`${GEOLOCATION_BASE_URL}?q=${city}+${country}&format=jsonv2`);
-                return result.json();
-            } catch (err) {
-                console.log(err)
+                return await axios.get(`${GEOLOCATION_BASE_URL}?q=${city}+${country}&format=jsonv2`);
+            } catch(err) {
                 throw new Error("The provided location cannot be found");
             }
         } else {
-            throw new Error("City and/or country must be non-empty strings");
+            throw new Error("City and/or country must be valid strings");
         }
     }
 }
 
-function formatCity(city) {
+function isValidParams(city: string, country: string) {
+    return city !== "" && country !== ""
+}
+
+function formatCity(city: string) {
     city = city.trim();
     city = city.replace(/ /g, "+");
     city = city.toLowerCase();
     return city;
 }
 
-function formatCountry(country) {
+function formatCountry(country: string) {
     country = country.trim();
     country = country.replace(/ /g, "+");
     country = country.toLowerCase();
