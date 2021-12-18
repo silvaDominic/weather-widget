@@ -17,11 +17,17 @@ export const GeoLocationService = {
         if (isValidParams(city, country)) {
             city = formatCity(city);
             country = formatCountry(country);
-            try {
-                return await axios.get(`${GEOLOCATION_BASE_URL}?q=${city}+${country}&format=jsonv2`);
-            } catch(err) {
-                throw new Error("The provided location cannot be found");
-            }
+            return axios.get(`${GEOLOCATION_BASE_URL}?q=${city}+${country}&format=jsonv2`)
+              .then(res => {
+                  if (!res.data.length) {
+                      throw new Error("The provided location cannot be found");
+                  }
+                  return res.data;
+              })
+              .catch(err => {
+                  console.log("GEO-SERVICE: ", err);
+                  throw err;
+              })
         } else {
             throw new Error("City and/or country must be valid strings");
         }

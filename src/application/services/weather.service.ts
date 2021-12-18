@@ -12,11 +12,12 @@ export const WeatherService: IWeatherService = {
     async getWeeklyWeather(city, country): Promise<any> {
         try {
             const response = await GeoLocationService.getCoordsByCityAndCountry(city, country);
-            const coordsModel = mapToCoordinates(response.data[0]);
+            const coordsModel = mapToCoordinates(response[0]);
             console.log("COORDS: ", coordsModel);
             return await axios.get(`${BASE_URL}/onecall?lat=${coordsModel.latitude}&lon=${coordsModel.longitude}&appid=${API_KEY_OPEN_WEATHER}`);
         } catch (err) {
-            return err;
+            console.log("WEATHER SERVICE ERR: ", err);
+            throw err;
         }
     }
 }
