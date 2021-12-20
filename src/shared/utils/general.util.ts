@@ -11,6 +11,11 @@ export function kelvinToCelsius(temp: number) {
     return Math.round(temp - 273.15);
 }
 
-export function unixToDay(unixTimeStamp: number) {
-    return new Date(unixTimeStamp * 1000).toLocaleString("en-US", {weekday: "short"});
+export function unixToDay(unixTimestamp: number, isShortHand: boolean = false) {
+    const format = isShortHand ? "short" : "long";
+    return new Date(unixTimestamp * 1000).toLocaleString("en-US", {weekday: format});
+}
+
+export function unixToHour(unixTimestamp: number) {
+    return new Date(unixTimestamp * 1000).toLocaleString("en-US", {hour: "numeric"});
 }

@@ -1,8 +1,8 @@
 export class HourlyWeatherViewmodel {
-  hour: string;
+  hour: number;
   temp: number;
 
-  constructor(hour: string = "", temp: number = 0) {
+  constructor(hour: number = 0, temp: number = 0) {
     this.hour = hour;
     this.temp = temp;
   }
