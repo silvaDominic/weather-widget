@@ -1,24 +1,43 @@
-import { WeatherModel } from "./models/weather.model";
-import { CurrentWeatherModel } from "./models/current-weather.model";
+import { DailyWeatherModel } from "./models/daily-weather.model";
 import { PlainObject } from '../shared/interfaces/plain-object';
+import { HourlyWeatherModel } from './models/hour-weather.model';
+import { CompleteWeatherModel } from './models/complete-weather.model';
 
-export function mapToWeatherModel(requestObj: PlainObject) {
-    let weatherModel = new WeatherModel();
-    weatherModel.temp = requestObj.main.temp;
-    weatherModel.humidity = requestObj.main.humidity;
-    weatherModel.pressure = requestObj.main.pressure;
-    weatherModel.maxTemp = requestObj.main.temp_max;
-    weatherModel.minTemp = requestObj.main.temp_min;
-    weatherModel.windSpeed = requestObj.wind.speed;
+export function mapToWeeklyWeatherModel(dto: PlainObject): CompleteWeatherModel {
+    let description: string;
+    let hourlyWeatherModel: HourlyWeatherModel[];
+    let weeklyWeatherModel: DailyWeatherModel[];
+
+    console.log(dto);
+
+    if (dto) {
+        description = dto.current.weather[0].description;
+        hourlyWeatherModel = dto.hourly.map((hourlyWeather: PlainObject) => {
+            return mapToHourlyWeatherModel(hourlyWeather);
+        })
+        weeklyWeatherModel = dto.daily.map((dailyWeather: PlainObject) => {
+            return mapToWeatherModel(dailyWeather);
+        });
+    } else {
+        throw new Error("No weather object returned with request");
+    }
+
+    return new CompleteWeatherModel(description, hourlyWeatherModel, weeklyWeatherModel);
+}
+
+function mapToWeatherModel(dto: PlainObject): DailyWeatherModel {
+    let weatherModel = new DailyWeatherModel();
+    weatherModel.date = dto.dt;
+    weatherModel.description = dto.weather[0].description;
+    weatherModel.temp = dto.temp.day;
+    weatherModel.maxTemp = dto.temp.max;
+    weatherModel.minTemp = dto.temp.min;
+    weatherModel.humidity = dto.humidity;
+    weatherModel.windSpeed = dto.wind_speed;
 
     return weatherModel;
 }
 
-export function mapToCurrentWeatherModel(requestObj: PlainObject) {
-    let currentWeatherModel = new CurrentWeatherModel();
-    currentWeatherModel.description = requestObj.weather[0].main;
-    currentWeatherModel.forecast = requestObj.weather[0].description;
-    currentWeatherModel.weather = mapToWeatherModel(requestObj);
-
-    return currentWeatherModel;
+function mapToHourlyWeatherModel(dto: PlainObject): HourlyWeatherModel {
+    return new HourlyWeatherModel(dto.dt, dto.temp);
 }
