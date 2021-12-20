@@ -1,9 +1,11 @@
 import { IWeatherService } from '../../application/IWeatherService';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
+import { TodaysWeatherViewmodel } from '../view-models/todays-weather.viewmodel';
 
-export function WeatherWidget({weatherService}: {weatherService: IWeatherService}) {
+export function WeatherWidget({weatherService}: { weatherService: IWeatherService }) {
   const [isSearching, setIsSearching] = useState(false);
+  const [todayWeatherViewModel, setWeatherViewModel] = useState(new TodaysWeatherViewmodel());
 
   return (
     <div id="weather-widget-container" className="container">
@@ -32,19 +34,22 @@ export function WeatherWidget({weatherService}: {weatherService: IWeatherService
     formEvent.preventDefault();
     // Extract form data
     const form = new FormData(formEvent.target);
-    const { city, country } = Object.fromEntries(form);
+    let {city, country} = Object.fromEntries(form);
 
     weatherService.getWeeklyWeather(city.toString(), country.toString()) // Data converted from File | string --> string
       .then(res => {
-        // Enable search once weather data has successfully returned
-        setIsSearching(false);
+        // formEvent.target.reset();
       })
       .catch(err => {
         Swal.fire({
           title: 'Search Error',
           text: err,
           icon: 'error',
-        })
-    });
+        });
+      })
+      .finally(() => {
+        // Enable search after request has completed
+        setIsSearching(false);
+    })
   }
 }
