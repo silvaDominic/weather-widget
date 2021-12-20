@@ -14,4 +14,21 @@ export class TodaysWeatherDetailViewmodel {
     this.windSpeed = windSpeed;
     this.humidity = humidity;
   }
+
+
+  getRoundedTemp() {
+    return Math.round(this.temp);
+  }
+
+  getRoundedHighTemp() {
+    return Math.round(this.highTemp);
+  }
+
+  getRoundedLowTemp() {
+    return Math.round(this.lowTemp);
+  }
+
+  getRoundedWindSpeed() {
+    return Math.round(this.windSpeed);
+  }
 }

@@ -1,11 +1,11 @@
 import { IWeatherService } from '../../application/IWeatherService';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { TodaysWeatherViewmodel } from '../view-models/todays-weather.viewmodel';
 import { ForecastModel } from '../../application/models/forecast.model';
 import { HourlyWeatherViewmodel } from '../view-models/hourly-weather.viewmodel';
 import { TodaysWeatherDetailViewmodel } from '../view-models/todays-weather-detail.viewmodel';
-import { kelvinToFahrenheit, unixToDay, unixToHour } from '../../shared/utils/general.util';
+import { unixToDay, unixToHour } from '../../shared/utils/general.util';
 import { DailyWeatherViewmodel } from '../view-models/daily-weather.viewmodel';
 import {
   mapToDailyForecast,
@@ -22,20 +22,29 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
   const [weeklyWeather, setWeeklyWeather] = useState(new Array<DailyWeatherViewmodel>());
   const [todaysWeatherDetail, setTodaysWeatherDetail] = useState(new TodaysWeatherDetailViewmodel());
 
+  useEffect(() => {
+    weatherService.getLocalForecast()
+      .then(weatherData => {
+        if (weatherData) {
+          updateForecast(weatherData);
+        }
+      });
+  }, []);
+
   return (
     <div id="weather-widget-container" className="container">
       <div id="todays-weather-brief-container">
-        <h1>{todaysWeather.temp}F</h1>
+        <h1>{todaysWeather.getRoundedTemp()}F</h1>
         <div>
-          Wind: {todaysWeather.windSpeed} mph
-          Humidity: {todaysWeather.humidity} %
+          Wind: {todaysWeather.getRoundedWindSpeed()} mph
+          Humidity: {todaysWeather.humidity}%
         </div>
       </div>
 
       <div>{day}</div>
 
       <div id="form-container">
-        <form id="location-form" onSubmit={ searchLocation }>
+        <form id="location-form" onSubmit={searchLocation}>
           <div className="form-control">
             <label htmlFor="city-text-field">City</label>
             <input required id="city-text-field" name="city" type="text"/>
@@ -54,7 +63,7 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
             hourlyWeather.map(hourlyWeather => (
               <div key={hourlyWeather.hour}>
                 <div>{unixToHour(hourlyWeather.hour)}</div>
-                <div>{hourlyWeather.temp}</div>
+                <div>{hourlyWeather.getRoundedTemp()}</div>
               </div>
             ))
           }
@@ -67,8 +76,8 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
             weeklyWeather.map(dailyWeather => (
               <span key={dailyWeather.day}>
                 <div>{dailyWeather.day}</div>
-                <div>{dailyWeather.highTemp}</div>
-                <div>{dailyWeather.lowTemp}</div>
+                <div>{dailyWeather.getRoundedHighTemp()}</div>
+                <div>{dailyWeather.getRoundedLowTemp()}</div>
               </span>
             ))
           }
@@ -92,6 +101,14 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
     </div>
   );
 
+  function updateForecast(weatherData: ForecastModel) {
+    setDay(unixToDay(weatherData.dailyWeather.date));
+    setHourlyWeather(mapToHourlyForecast(weatherData.hourlyWeather));
+    setWeeklyWeather(mapToWeeklyForecast(weatherData.weeklyWeather));
+    setTodaysWeather(mapToTodaysWeatherForecast(weatherData.dailyWeather));
+    setTodaysWeatherDetail(mapToDailyForecast(weatherData.dailyWeather));
+  }
+
   async function searchLocation(formEvent: any) {
     // Disable search while searching
     setIsSearching(true);
@@ -104,11 +121,7 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
     // request data and setup viewmodels
     weatherService.getForecast(city.toString(), country.toString()) // Data converted from File | string --> string
       .then((weatherData: ForecastModel) => {
-        setDay(unixToDay(weatherData.dailyWeather.date));
-        setHourlyWeather(mapToHourlyForecast(weatherData.hourlyWeather));
-        setWeeklyWeather(mapToWeeklyForecast(weatherData.weeklyWeather));
-        setTodaysWeather(mapToTodaysWeatherForecast(weatherData.dailyWeather));
-        setTodaysWeatherDetail(mapToDailyForecast(weatherData.dailyWeather));
+        updateForecast(weatherData);
         // formEvent.target.reset();
       })
       .catch(err => {

@@ -7,7 +7,7 @@ export class HourlyWeatherViewmodel {
     this.temp = temp;
   }
 
-  getFormattedDate(utcTime: number) {
-    return;
+  getRoundedTemp() {
+    return Math.round(this.temp);
   }
 }

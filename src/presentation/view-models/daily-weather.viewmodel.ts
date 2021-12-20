@@ -1,5 +1,3 @@
-import { DAY } from '../../shared/enums/day.enum';
-
 export class DailyWeatherViewmodel {
   day: string;
   highTemp: number;
@@ -11,7 +9,11 @@ export class DailyWeatherViewmodel {
     this.lowTemp = lowTemp;
   }
 
-  getFormattedDate(utcTime: number) {
-    return;
+  getRoundedHighTemp() {
+    return Math.round(this.highTemp);
+  }
+
+  getRoundedLowTemp() {
+    return Math.round(this.lowTemp);
   }
 }
