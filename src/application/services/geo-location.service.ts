@@ -1,5 +1,6 @@
 import { CoordinatesModel } from "../models/coordinates.model";
 import axios from 'axios';
+import { PlainObject } from '../../shared/interfaces/plain-object';
 const GEOLOCATION_BASE_URL = "https://nominatim.openstreetmap.org/search.php";
 
 export const GeoLocationService = {
@@ -17,7 +18,12 @@ export const GeoLocationService = {
         if (isValidParams(city, country)) {
             city = formatCity(city);
             country = formatCountry(country);
-            return axios.get(`${GEOLOCATION_BASE_URL}?q=${city}+${country}&format=jsonv2`)
+
+            const params: PlainObject = {
+                q: `${city}+${country}`,
+                format: "jsonv2",
+            }
+            return axios.get(GEOLOCATION_BASE_URL, { params })
               .then(res => {
                   if (!res.data.length) {
                       throw new Error("The provided location cannot be found");
@@ -34,18 +40,18 @@ export const GeoLocationService = {
     }
 }
 
-function isValidParams(city: string, country: string) {
-    return city !== "" && country !== ""
+function isValidParams(city: string, country: string): boolean {
+    return city !== "" && country !== "";
 }
 
-function formatCity(city: string) {
+function formatCity(city: string): string {
     city = city.trim();
     city = city.replace(/ /g, "+");
     city = city.toLowerCase();
     return city;
 }
 
-function formatCountry(country: string) {
+function formatCountry(country: string): string {
     country = country.trim();
     country = country.replace(/ /g, "+");
     country = country.toLowerCase();

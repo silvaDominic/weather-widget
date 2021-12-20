@@ -3,7 +3,7 @@ import { PlainObject } from '../shared/interfaces/plain-object';
 import { HourlyWeatherModel } from './models/hour-weather.model';
 import { ForecastModel } from './models/forecast.model';
 
-export function mapToForecast(dto: PlainObject): ForecastModel {
+export function mapToForecastModel(dto: PlainObject): ForecastModel {
     let hourlyWeatherModel: HourlyWeatherModel[];
     let weeklyWeatherModel: DailyWeatherModel[];
 
