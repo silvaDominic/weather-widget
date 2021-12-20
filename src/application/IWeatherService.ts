@@ -1,3 +1,3 @@
 export interface IWeatherService {
-  getWeeklyWeather: (city: string, country: string) => Promise<any>
+  getForecast: (city: string, country: string) => Promise<any>
 }

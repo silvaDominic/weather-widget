@@ -4,19 +4,19 @@ import { GeoLocationService } from "./geo-location.service";
 import { mapToCoordinates } from "../location.mapper";
 import { IWeatherService } from '../IWeatherService';
 import axios from 'axios';
-import { mapToWeeklyWeatherModel } from '../weather.mapper';
+import { mapToForecast } from '../weather.mapper';
 
 const API_VERSION = "2.5";
 const BASE_URL = `https://api.openweathermap.org/data/${API_VERSION}`;
 
 export const WeatherService: IWeatherService = {
-    async getWeeklyWeather(city, country): Promise<any> {
+    async getForecast(city, country): Promise<any> {
         try {
             const geoResponse = await GeoLocationService.getCoordsByCityAndCountry(city, country);
             const coordsModel = mapToCoordinates(geoResponse[0]);
             console.log("COORDS: ", coordsModel);
             const weatherResponse = await axios.get(`${BASE_URL}/onecall?lat=${coordsModel.latitude}&lon=${coordsModel.longitude}&appid=${API_KEY_OPEN_WEATHER}`);
-            return mapToWeeklyWeatherModel(weatherResponse.data);
+            return mapToForecast(weatherResponse.data);
         } catch (err) {
             console.log("WEATHER SERVICE ERR: ", err);
             throw err;

@@ -1,13 +1,13 @@
 import { HourlyWeatherModel } from './hour-weather.model';
 import { DailyWeatherModel } from './daily-weather.model';
 
-export class CompleteWeatherModel {
-  description: string;
+export class ForecastModel {
+  dailyWeather: DailyWeatherModel;
   hourlyWeather: HourlyWeatherModel[];
   weeklyWeather: DailyWeatherModel[];
 
-  constructor(description: string, hourlyWeather: HourlyWeatherModel[], weeklyWeather: DailyWeatherModel[]) {
-    this.description = description;
+  constructor(hourlyWeather: HourlyWeatherModel[] = [], weeklyWeather: DailyWeatherModel[] = []) {
+    this.dailyWeather = weeklyWeather[0];
     this.hourlyWeather = hourlyWeather;
     this.weeklyWeather = weeklyWeather;
   }

@@ -1,28 +1,24 @@
 import { DailyWeatherModel } from "./models/daily-weather.model";
 import { PlainObject } from '../shared/interfaces/plain-object';
 import { HourlyWeatherModel } from './models/hour-weather.model';
-import { CompleteWeatherModel } from './models/complete-weather.model';
+import { ForecastModel } from './models/forecast.model';
 
-export function mapToWeeklyWeatherModel(dto: PlainObject): CompleteWeatherModel {
-    let description: string;
+export function mapToForecast(dto: PlainObject): ForecastModel {
     let hourlyWeatherModel: HourlyWeatherModel[];
     let weeklyWeatherModel: DailyWeatherModel[];
 
-    console.log(dto);
-
     if (dto) {
-        description = dto.current.weather[0].description;
         hourlyWeatherModel = dto.hourly.map((hourlyWeather: PlainObject) => {
             return mapToHourlyWeatherModel(hourlyWeather);
-        })
+        }).slice(0, 5); // Only need the first 6 hours of data
         weeklyWeatherModel = dto.daily.map((dailyWeather: PlainObject) => {
             return mapToWeatherModel(dailyWeather);
-        });
+        }).slice(0,6); // Only need the first 7 days of data
     } else {
         throw new Error("No weather object returned with request");
     }
 
-    return new CompleteWeatherModel(description, hourlyWeatherModel, weeklyWeatherModel);
+    return new ForecastModel(hourlyWeatherModel, weeklyWeatherModel);
 }
 
 function mapToWeatherModel(dto: PlainObject): DailyWeatherModel {
