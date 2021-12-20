@@ -10,3 +10,7 @@ export function kelvinToFahrenheit(temp: number) {
 export function kelvinToCelsius(temp: number) {
     return Math.round(temp - 273.15);
 }
+
+export function unixToDay(unixTimeStamp: number) {
+    return new Date(unixTimeStamp * 1000).toLocaleString("en-US", {weekday: "short"});
+}
