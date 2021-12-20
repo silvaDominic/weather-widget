@@ -4,14 +4,18 @@ import { PlainObject } from '../../shared/interfaces/plain-object';
 const GEOLOCATION_BASE_URL = "https://nominatim.openstreetmap.org/search.php";
 
 export const GeoLocationService = {
-    async getCurrentLocation() {
-        if('geolocation' in navigator) {
-            return navigator.geolocation.getCurrentPosition(position => {
-                return new CoordinatesModel(position.coords.latitude, position.coords.longitude);
-            })
-        } else {
-            /* geolocation IS NOT available */
-        }
+    async getCurrentLocationCoords(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            if('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    resolve(new CoordinatesModel(position.coords.latitude, position.coords.longitude));
+                }, err => {
+                    reject(err);
+                });
+            } else {
+                reject("Location service not found");
+            }
+        });
     },
 
     async getCoordsByCityAndCountry(city: string, country: string) {
