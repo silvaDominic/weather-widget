@@ -1,15 +1,11 @@
 export class TodaysWeatherViewmodel {
   temp: number;
-  windSpeed: string;
+  windSpeed: number;
   humidity: number;
 
-  constructor() {
-    this.temp = 0;
-    this.windSpeed = "";
-    this.humidity = 0;
-  }
-
-  getFormattedWindspeed() {
-    return this.windSpeed + " mph";
+  constructor(temp: number = 0, windSpeed: number = 0, humidity: number = 0) {
+    this.temp = temp;
+    this.windSpeed = windSpeed;
+    this.humidity = humidity;
   }
 }

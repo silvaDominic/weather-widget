@@ -2,9 +2,9 @@ export class HourlyWeatherViewmodel {
   hour: string;
   temp: number;
 
-  constructor() {
-    this.hour = "";
-    this.temp = 0;
+  constructor(hour: string = "", temp: number = 0) {
+    this.hour = hour;
+    this.temp = temp;
   }
 
   getFormattedDate(utcTime: number) {
