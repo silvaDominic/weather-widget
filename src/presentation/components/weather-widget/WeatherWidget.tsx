@@ -1,5 +1,5 @@
 import { IWeatherService } from '../../application/IWeatherService';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { TodaysWeatherViewmodel } from '../view-models/todays-weather.viewmodel';
 import { ForecastModel } from '../../application/models/forecast.model';
@@ -13,6 +13,8 @@ import {
   mapToTodaysWeatherForecast,
   mapToWeeklyForecast
 } from '../forecast.mapper';
+import { DailyForecastItem } from './daily-forecast-item/DailyForecastItem';
+import { HourlyForecastItem } from './hourly-forecast-item/HourlyForecastItem';
 
 export function WeatherWidget({weatherService}: { weatherService: IWeatherService }) {
   const [day, setDay] = useState("");
@@ -33,71 +35,73 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
 
   return (
     <div id="weather-widget-container" className="container">
-      <div id="todays-weather-brief-container">
-        <h1>{todaysWeather.getRoundedTemp()}F</h1>
+      <div className="flex-space-between">
+        <div id="todays-weather-brief-container" className="">
+          <h1>{todaysWeather.getRoundedTemp()}F</h1>
+          <div>
+            Wind: {todaysWeather.getRoundedWindSpeed()} mph
+            Humidity: {todaysWeather.humidity}%
+          </div>
+        </div>
+
+        <div>{day}</div>
+
+        <div id="form-container">
+          <form id="location-form" onSubmit={searchLocation}>
+            <div className="form-control">
+              <label htmlFor="city-text-field">City</label>
+              <input required id="city-text-field" name="city" type="text"/>
+            </div>
+
+            <div className="formControl">
+              <label htmlFor="country-text-field">Country</label>
+              <input required id="country-text-field" name="country" type="text"/>
+            </div>
+
+            <button disabled={isSearching}>Search</button>
+          </form>
+        </div>
+      </div>
+
+
+      <div id="hourly-weather-container" className="flex-center">
+        {
+          hourlyWeather.map(hourlyWeather => (
+            <Fragment key={hourlyWeather.hour}>
+              <HourlyForecastItem
+                hour={hourlyWeather.hour}
+                temp={hourlyWeather.getRoundedTemp()}/>
+            </Fragment>
+          ))
+        }
+      </div>
+
+      <div id="weekly-weather-container" className="flex-center">
+        {
+          weeklyWeather.map(dailyWeather => (
+            <Fragment key={dailyWeather.day}>
+              <DailyForecastItem
+                day={dailyWeather.day}
+                highTemp={dailyWeather.getRoundedHighTemp()}
+                lowTemp={dailyWeather.getRoundedLowTemp()}/>
+            </Fragment>
+          ))
+        }
+      </div>
+
+      <div id="daily-weather-detail-container">
         <div>
-          Wind: {todaysWeather.getRoundedWindSpeed()} mph
-          Humidity: {todaysWeather.humidity}%
+          <h3>{todaysWeatherDetail.description}</h3>
+          <p>The high will be {todaysWeatherDetail.highTemp}F, the low will
+            be {todaysWeatherDetail.lowTemp}F.</p>
+        </div>
+
+        <div>
+          Wind: {todaysWeatherDetail.windSpeed} mph
+          Humidity: {todaysWeatherDetail.humidity} %
         </div>
       </div>
 
-      <div>{day}</div>
-
-      <div id="form-container">
-        <form id="location-form" onSubmit={searchLocation}>
-          <div className="form-control">
-            <label htmlFor="city-text-field">City</label>
-            <input required id="city-text-field" name="city" type="text"/>
-          </div>
-
-          <div className="formControl">
-            <label htmlFor="country-text-field">Country</label>
-            <input required id="country-text-field" name="country" type="text"/>
-          </div>
-
-          <button disabled={isSearching}>Search</button>
-        </form>
-
-        <div id="hourly-weather-container">
-          {
-            hourlyWeather.map(hourlyWeather => (
-              <div key={hourlyWeather.hour}>
-                <div>{unixToHour(hourlyWeather.hour)}</div>
-                <div>{hourlyWeather.getRoundedTemp()}</div>
-              </div>
-            ))
-          }
-        </div>
-
-        <hr/>
-
-        <div id="weekly-weather-container">
-          {
-            weeklyWeather.map(dailyWeather => (
-              <span key={dailyWeather.day}>
-                <div>{dailyWeather.day}</div>
-                <div>{dailyWeather.getRoundedHighTemp()}</div>
-                <div>{dailyWeather.getRoundedLowTemp()}</div>
-              </span>
-            ))
-          }
-        </div>
-
-        <hr/>
-
-        <div id="daily-weather-detail-container">
-          <div>
-            <h3>{todaysWeatherDetail.description}</h3>
-            <p>The high will be {todaysWeatherDetail.highTemp}F, the low will
-              be {todaysWeatherDetail.lowTemp}F.</p>
-          </div>
-
-          <div>
-            Wind: {todaysWeatherDetail.windSpeed} mph
-            Humidity: {todaysWeatherDetail.humidity} %
-          </div>
-        </div>
-      </div>
     </div>
   );
 

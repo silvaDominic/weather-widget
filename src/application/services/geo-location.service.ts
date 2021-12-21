@@ -18,13 +18,10 @@ export const GeoLocationService = {
         });
     },
 
-    async getCoordsByCityAndCountry(city: string, country: string) {
-        if (isValidParams(city, country)) {
-            city = formatCity(city);
-            country = formatCountry(country);
-
+    async getCoordsByZipcode(zipcode: string): Promise<any> {
+        if (isValidParams(zipcode)) {
             const params: PlainObject = {
-                q: `${city}+${country}`,
+                q: zipcode,
                 format: "jsonv2",
             }
             return axios.get(GEOLOCATION_BASE_URL, { params })
@@ -44,8 +41,8 @@ export const GeoLocationService = {
     }
 }
 
-function isValidParams(city: string, country: string): boolean {
-    return city !== "" && country !== "";
+function isValidParams(zipcode: string): boolean {
+    return zipcode !== undefined && /^[0-9]+$/.test(zipcode);
 }
 
 function formatCity(city: string): string {

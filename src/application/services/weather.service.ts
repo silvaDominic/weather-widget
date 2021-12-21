@@ -1,5 +1,4 @@
 import { API_KEY_OPEN_WEATHER } from "../../shared/constants/environment.const";
-import { capitalize } from "../../shared/utils/general.util";
 import { GeoLocationService } from "./geo-location.service";
 import { mapToCoordinates } from "../location.mapper";
 import { IWeatherService } from '../IWeatherService';
@@ -7,14 +6,15 @@ import axios from 'axios';
 import { mapToForecastModel } from '../weather.mapper';
 import { UNIT } from '../../shared/enums/unit.enum';
 import { CoordinatesModel } from '../models/coordinates.model';
+import { ForecastModel } from '../models/forecast.model';
 
 const API_VERSION = "2.5";
 const BASE_URL = `https://api.openweathermap.org/data/${API_VERSION}`;
 
 export const WeatherService: IWeatherService = {
-    async getForecast(city, country): Promise<any> {
+    async getForecast(zipcode): Promise<ForecastModel> {
         try {
-            const geoResponse = await GeoLocationService.getCoordsByCityAndCountry(city, country);
+            const geoResponse = await GeoLocationService.getCoordsByZipcode(zipcode);
             const coordsModel = mapToCoordinates(geoResponse[0]);
 
             const params = {
@@ -31,7 +31,7 @@ export const WeatherService: IWeatherService = {
         }
     },
 
-    async getLocalForecast() {
+    async getLocalForecast(): Promise<ForecastModel> {
         const coordsModel: CoordinatesModel = await GeoLocationService.getCurrentLocationCoords();
         const params = {
             units: UNIT.IMPERIAL,
