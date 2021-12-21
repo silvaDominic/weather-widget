@@ -1,6 +1,10 @@
-import { CoordinatesModel } from "./models/coordinates.model";
 import { PlainObject } from '../shared/interfaces/plain-object';
+import { IGeolocationResponse } from './models/geo-response.interface';
 
-export function mapToCoordinates(responseObj: PlainObject) {
-    return new CoordinatesModel(responseObj.lat, responseObj.lon);
+export function mapToGeolocationResponse(dto: PlainObject): IGeolocationResponse {
+    return {
+        displayLocation: dto.name,
+        latitude: dto.lat,
+        longitude: dto.lon,
+    }
 }
