@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { WeatherWidget } from './components/WeatherWidget';
+import { WeatherWidget } from './components/weather-widget/WeatherWidget';
 import { WeatherService } from '../application/services/weather.service';
 
 function App() {

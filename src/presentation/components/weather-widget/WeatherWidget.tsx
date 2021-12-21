@@ -1,20 +1,21 @@
-import { IWeatherService } from '../../application/IWeatherService';
+import { IWeatherService } from '../../../application/IWeatherService';
 import { Fragment, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
-import { TodaysWeatherViewmodel } from '../view-models/todays-weather.viewmodel';
-import { ForecastModel } from '../../application/models/forecast.model';
-import { HourlyWeatherViewmodel } from '../view-models/hourly-weather.viewmodel';
-import { TodaysWeatherDetailViewmodel } from '../view-models/todays-weather-detail.viewmodel';
-import { unixToDay, unixToHour } from '../../shared/utils/general.util';
-import { DailyWeatherViewmodel } from '../view-models/daily-weather.viewmodel';
+import { TodaysWeatherViewmodel } from '../../view-models/todays-weather.viewmodel';
+import { ForecastModel } from '../../../application/models/forecast.model';
+import { HourlyWeatherViewmodel } from '../../view-models/hourly-weather.viewmodel';
+import { TodaysWeatherDetailViewmodel } from '../../view-models/todays-weather-detail.viewmodel';
+import { capitalize, unixToDay, unixToHour } from '../../../shared/utils/general.util';
+import { DailyWeatherViewmodel } from '../../view-models/daily-weather.viewmodel';
 import {
   mapToDailyForecast,
   mapToHourlyForecast,
   mapToTodaysWeatherForecast,
   mapToWeeklyForecast
-} from '../forecast.mapper';
-import { DailyForecastItem } from './daily-forecast-item/DailyForecastItem';
-import { HourlyForecastItem } from './hourly-forecast-item/HourlyForecastItem';
+} from '../../forecast.mapper';
+import { DailyForecastItem } from '../daily-forecast-item/DailyForecastItem';
+import { HourlyForecastItem } from '../hourly-forecast-item/HourlyForecastItem';
+import './WeatherWidget.css';
 
 export function WeatherWidget({weatherService}: { weatherService: IWeatherService }) {
   const [day, setDay] = useState("");
@@ -26,7 +27,7 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
 
   useEffect(() => {
     weatherService.getLocalForecast()
-      .then(weatherData => {
+      .then((weatherData: ForecastModel)  => {
         if (weatherData) {
           updateForecast(weatherData);
         }
@@ -35,34 +36,25 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
 
   return (
     <div id="weather-widget-container" className="container">
-      <div className="flex-space-between">
+      <div id="header-container" className="flex-space-between">
         <div id="todays-weather-brief-container" className="">
           <h1>{todaysWeather.getRoundedTemp()}F</h1>
-          <div>
-            Wind: {todaysWeather.getRoundedWindSpeed()} mph
-            Humidity: {todaysWeather.humidity}%
-          </div>
+          <div>Wind: {todaysWeather.getRoundedWindSpeed()} mph</div>
+          <div> Humidity: {todaysWeather.humidity}%</div>
         </div>
 
-        <div>{day}</div>
+        <h1>{day}</h1>
 
         <div id="form-container">
           <form id="location-form" onSubmit={searchLocation}>
             <div className="form-control">
-              <label htmlFor="city-text-field">City</label>
-              <input required id="city-text-field" name="city" type="text"/>
-            </div>
-
-            <div className="formControl">
-              <label htmlFor="country-text-field">Country</label>
-              <input required id="country-text-field" name="country" type="text"/>
+              <input placeholder="Zipcode" required id="zipcode-text-field" name="zipcode" type="text"/>
             </div>
 
             <button disabled={isSearching}>Search</button>
           </form>
         </div>
       </div>
-
 
       <div id="hourly-weather-container" className="flex-center">
         {
@@ -91,15 +83,13 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
 
       <div id="daily-weather-detail-container">
         <div>
-          <h3>{todaysWeatherDetail.description}</h3>
-          <p>The high will be {todaysWeatherDetail.highTemp}F, the low will
-            be {todaysWeatherDetail.lowTemp}F.</p>
+          <h3>{capitalize(todaysWeatherDetail.description)}</h3>
+          <p>The high will be {todaysWeatherDetail.getRoundedHighTemp()}F, the low will
+            be {todaysWeatherDetail.getRoundedLowTemp()}F.</p>
         </div>
 
-        <div>
-          Wind: {todaysWeatherDetail.windSpeed} mph
-          Humidity: {todaysWeatherDetail.humidity} %
-        </div>
+        <div>Wind: {todaysWeatherDetail.getRoundedWindSpeed()} mph</div>
+        <div>Humidity: {todaysWeatherDetail.humidity}%</div>
       </div>
 
     </div>
@@ -120,10 +110,10 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
     formEvent.preventDefault();
     // Extract form data
     const form = new FormData(formEvent.target);
-    let {city, country} = Object.fromEntries(form);
+    let { zipcode } = Object.fromEntries(form);
 
     // request data and setup viewmodels
-    weatherService.getForecast(city.toString(), country.toString()) // Data converted from File | string --> string
+    weatherService.getForecast(zipcode.toString()) // Data converted from File | string --> string
       .then((weatherData: ForecastModel) => {
         updateForecast(weatherData);
         // formEvent.target.reset();
