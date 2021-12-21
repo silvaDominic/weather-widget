@@ -1,4 +1,10 @@
-export class DailyWeatherViewmodel {
+export interface IDailyWeatherViewmodel {
+  day: string;
+  highTemp: number;
+  lowTemp: number;
+}
+
+export class DailyWeatherViewmodel implements IDailyWeatherViewmodel{
   day: string;
   highTemp: number;
   lowTemp: number;

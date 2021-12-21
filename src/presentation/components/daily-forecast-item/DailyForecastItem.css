@@ -1,0 +1,27 @@
+.daily-list-item {
+    text-align: center;
+    padding: 0.25rem;
+    margin: 0.5rem;
+    transition: background-color 0.2s;
+    border-radius: 0.5rem;
+}
+
+.daily-list-item:hover {
+    background-color: gray;
+    cursor: pointer;
+}
+
+.daily-list-item p {
+    margin-top: 0;
+}
+
+.daily-list-item .high-temp {
+    font-weight: bold;
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.daily-list-item .low-temp {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
