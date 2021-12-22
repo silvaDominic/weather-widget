@@ -1,4 +1,4 @@
-export class TodaysWeatherViewmodel {
+export class TodaysForecastVM {
   temp: number;
   windSpeed: number;
   humidity: number;

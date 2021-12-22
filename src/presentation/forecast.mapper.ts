@@ -1,19 +1,18 @@
 import { HourlyWeatherModel } from '../application/models/hour-weather.model';
-import { HourlyWeatherViewmodel } from './view-models/hourly-weather.viewmodel';
-import { TodaysWeatherDetailViewmodel } from './view-models/todays-weather-detail.viewmodel';
+import { HourlyForecastVM } from './view-models/hourly-forecast.viewmodel';
+import { DailyForecastVM } from './view-models/daily-forecast.viewmodel';
 import { DailyWeatherModel } from '../application/models/daily-weather.model';
-import { TodaysWeatherViewmodel } from './view-models/todays-weather.viewmodel';
-import { DailyWeatherViewmodel } from './view-models/daily-weather.viewmodel';
-import { unixToDay } from '../shared/utils/general.util';
+import { TodaysForecastVM } from './view-models/todays-forecast.viewmodel';
 
 export function mapToHourlyForecast(model: HourlyWeatherModel[]) {
   return model.map(data => {
-    return new HourlyWeatherViewmodel(data.date, data.temp);
+    return new HourlyForecastVM(data.date, data.temp);
   });
 }
 
-export function mapToDailyForecast(model: DailyWeatherModel) {
-  return new TodaysWeatherDetailViewmodel(
+export function mapToTodaysWeatherDetailVM(model: DailyWeatherModel) {
+  return new DailyForecastVM(
+    model.date,
     model.temp,
     model.maxTemp,
     model.minTemp,
@@ -23,16 +22,24 @@ export function mapToDailyForecast(model: DailyWeatherModel) {
   );
 }
 
-export function mapToTodaysWeatherForecast(model: DailyWeatherModel) {
-  return new TodaysWeatherViewmodel(
+export function mapToTodaysForecastVM(model: DailyWeatherModel) {
+  return new TodaysForecastVM(
     model.temp,
     model.windSpeed,
     model.humidity
   );
 }
 
-export function mapToWeeklyForecast(model: DailyWeatherModel[]) {
-  return model.map(data => {
-    return new DailyWeatherViewmodel(unixToDay(data.date, true), data.maxTemp, data.minTemp);
-  });
+export function mapToWeeklyForecast(model: DailyWeatherModel[]): DailyForecastVM[] {
+  return model.map(data =>
+    new DailyForecastVM(
+      data.date,
+      data.temp,
+      data.maxTemp,
+      data.minTemp,
+      data.description,
+      data.windSpeed,
+      data.humidity
+    )
+  );
 }

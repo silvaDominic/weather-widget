@@ -1,4 +1,7 @@
-export class TodaysWeatherDetailViewmodel {
+import { unixToDay } from '../../shared/utils/general.util';
+
+export class DailyForecastVM {
+  date: number;
   temp: number;
   highTemp: number;
   lowTemp: number;
@@ -6,7 +9,8 @@ export class TodaysWeatherDetailViewmodel {
   windSpeed: number;
   humidity: number;
 
-  constructor(temp: number = 0, highTemp: number = 0, lowTemp: number = 0, description: string = "", windSpeed: number = 0, humidity: number = 0) {
+  constructor(date: number = 0, temp: number = 0, highTemp: number = 0, lowTemp: number = 0, description: string = "", windSpeed: number = 0, humidity: number = 0) {
+    this.date = date;
     this.temp = temp;
     this.highTemp = highTemp;
     this.lowTemp = lowTemp;
@@ -30,5 +34,9 @@ export class TodaysWeatherDetailViewmodel {
 
   getRoundedWindSpeed() {
     return Math.round(this.windSpeed);
+  }
+
+  getDay() {
+    return unixToDay(this.date, true);
   }
 }

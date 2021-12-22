@@ -1,9 +1,9 @@
-export interface IHourlyWeatherViewmodel {
+export interface IHourlyWeatherVM {
   hour: number;
   temp: number;
 }
 
-export class HourlyWeatherViewmodel implements IHourlyWeatherViewmodel {
+export class HourlyForecastVM implements IHourlyWeatherVM {
   hour: number;
   temp: number;
 
