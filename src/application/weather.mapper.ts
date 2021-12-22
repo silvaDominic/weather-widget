@@ -13,7 +13,7 @@ export function mapToForecastModel(dto: PlainObject, displayLocation: string): F
         }).slice(0, 5); // Only need the first 6 hours of data
         weeklyWeatherModel = dto.daily.map((dailyWeather: PlainObject) => {
             return mapToWeatherModel(dailyWeather);
-        }).slice(0,6); // Only need the first 7 days of data
+        }).slice(0,7); // Only need the first 7 days of data
     } else {
         throw new Error("No weather object returned with request");
     }

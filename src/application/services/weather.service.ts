@@ -1,5 +1,5 @@
 // Models
-import { IWeatherService } from '../IWeatherService';
+import { IWeatherService } from '../models/weather-service.interface';
 import { IGeolocationResponse } from '../models/geo-response.interface';
 import { ForecastModel } from '../models/forecast.model';
 // Helpers
@@ -17,7 +17,7 @@ export const WeatherService: IWeatherService = {
     async getForecastByZipcode(zipcode): Promise<ForecastModel> {
         try {
             const geoResponse: IGeolocationResponse = await GeoLocationService.getGeolocationByZipcode(zipcode);
-            return await this.getForecast(geoResponse);
+            return await getForecast(geoResponse);
         } catch (err) {
             throw err;
         }
@@ -25,22 +25,22 @@ export const WeatherService: IWeatherService = {
 
     async getLocalForecast(): Promise<ForecastModel> {
         const geoResponse: IGeolocationResponse = await GeoLocationService.getCurrentLocationCoords();
-        return await this.getForecast(geoResponse);
+        return await getForecast(geoResponse);
     },
+}
 
-    async getForecast(geoResponse: IGeolocationResponse): Promise<ForecastModel> {
-        const params = {
-            units: UNIT.IMPERIAL,
-            lat: geoResponse.latitude,
-            lon: geoResponse.longitude,
-            exclude: "minutely,alerts",
-            appid: API_KEY_OPEN_WEATHER
-        }
-        try {
-            const weatherResponse = await axios.get(`${BASE_URL}/onecall`, { params });
-            return mapToForecastModel(weatherResponse.data, geoResponse.displayLocation);
-        } catch (err) {
-            throw err;
-        }
+async function getForecast(geoResponse: IGeolocationResponse): Promise<ForecastModel> {
+    const params = {
+        units: UNIT.IMPERIAL,
+        lat: geoResponse.latitude,
+        lon: geoResponse.longitude,
+        exclude: "minutely,alerts",
+        appid: API_KEY_OPEN_WEATHER
+    }
+    try {
+        const weatherResponse = await axios.get(`${BASE_URL}/onecall`, { params });
+        return mapToForecastModel(weatherResponse.data, geoResponse.displayLocation);
+    } catch (err) {
+        throw err;
     }
 }

@@ -6,15 +6,16 @@ import axios from 'axios';
 import { mapToGeolocationResponse } from '../location.mapper';
 // Constants
 import { API_KEY_OPEN_WEATHER } from '../../shared/constants/environment.const';
+import { IGeolocationService } from '../models/geolocation-service.interface';
 
 const GEOLOCATION_BASE_URL = "http://api.openweathermap.org/geo/1.0";
 
-export const GeoLocationService = {
+export const GeoLocationService: IGeolocationService = {
   async getCurrentLocationCoords(): Promise<IGeolocationResponse> {
     return new Promise((resolve, reject) => {
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(async position => {
-          resolve(await this.getLocationByCoordinates(position.coords.latitude, position.coords.longitude));
+          resolve(await getLocationByCoords(position.coords.latitude, position.coords.longitude));
         }, err => {
           reject(err);
         });
@@ -22,26 +23,6 @@ export const GeoLocationService = {
         reject("Location service not found");
       }
     });
-  },
-
-  async getLocationByCoordinates(latitude: number, longitude: number): Promise<IGeolocationResponse> {
-    const params: PlainObject = {
-      lat: latitude,
-      lon: longitude,
-      limit: 1, // Prefer the first result since we cannot vet the response for correctness
-      appid: API_KEY_OPEN_WEATHER,
-    }
-    return axios.get(`${GEOLOCATION_BASE_URL}/reverse`, {params})
-      .then(res => {
-        if (!res.data.length) {
-          throw new Error("The provided location cannot be found");
-        }
-        return mapToGeolocationResponse(res.data[0]);
-      })
-      .catch(err => {
-        console.log("GEO-SERVICE: ", err);
-        throw err;
-      })
   },
 
   async getGeolocationByZipcode(zipcode: string): Promise<IGeolocationResponse> {
@@ -55,7 +36,7 @@ export const GeoLocationService = {
         if (!res.data) {
           throw new Error("The provided location cannot be found");
         }
-        return await this.getLocationByCoordinates(res.data.lat, res.data.lon);
+        return await getLocationByCoords(res.data.lat, res.data.lon);
       } catch (err) {
         throw err;
       }
@@ -63,6 +44,26 @@ export const GeoLocationService = {
       throw new Error("City and/or country must be valid strings");
     }
   }
+}
+
+async function getLocationByCoords(latitude: number, longitude: number): Promise<IGeolocationResponse> {
+  const params: PlainObject = {
+  lat: latitude,
+  lon: longitude,
+  limit: 1, // Prefer the first result since we cannot vet the response for correctness
+  appid: API_KEY_OPEN_WEATHER,
+}
+return axios.get(`${GEOLOCATION_BASE_URL}/reverse`, {params})
+  .then(res => {
+    if (!res.data.length) {
+      throw new Error("The provided location cannot be found");
+    }
+    return mapToGeolocationResponse(res.data[0]);
+  })
+  .catch(err => {
+    console.log("GEO-SERVICE: ", err);
+    throw err;
+  })
 }
 
 function isValidParams(zipcode: string): boolean {
