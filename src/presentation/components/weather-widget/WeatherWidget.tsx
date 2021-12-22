@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import './WeatherWidget.css';
 // Models
-import { IWeatherService } from '../../../application/IWeatherService';
+import { IWeatherService } from '../../../application/models/weather-service.interface';
 import { TodaysForecastVM } from '../../view-models/todays-forecast.viewmodel';
 import { ForecastModel } from '../../../application/models/forecast.model';
 import { HourlyForecastVM } from '../../view-models/hourly-forecast.viewmodel';
