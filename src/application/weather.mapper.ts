@@ -3,7 +3,7 @@ import { PlainObject } from '../shared/interfaces/plain-object';
 import { HourlyWeatherModel } from './models/hour-weather.model';
 import { ForecastModel } from './models/forecast.model';
 
-export function mapToForecastModel(dto: PlainObject): ForecastModel {
+export function mapToForecastModel(dto: PlainObject, displayLocation: string): ForecastModel {
     let hourlyWeatherModel: HourlyWeatherModel[];
     let weeklyWeatherModel: DailyWeatherModel[];
 
@@ -18,7 +18,7 @@ export function mapToForecastModel(dto: PlainObject): ForecastModel {
         throw new Error("No weather object returned with request");
     }
 
-    return new ForecastModel(hourlyWeatherModel, weeklyWeatherModel);
+    return new ForecastModel(hourlyWeatherModel, weeklyWeatherModel, displayLocation);
 }
 
 function mapToWeatherModel(dto: PlainObject): DailyWeatherModel {

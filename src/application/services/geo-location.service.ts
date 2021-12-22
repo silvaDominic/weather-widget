@@ -1,8 +1,11 @@
-import axios from 'axios';
+// Models
 import { PlainObject } from '../../shared/interfaces/plain-object';
-import { mapToGeolocationResponse } from '../location.mapper';
-import { API_KEY_OPEN_WEATHER } from '../../shared/constants/environment.const';
 import { IGeolocationResponse } from '../models/geo-response.interface';
+// Helpers
+import axios from 'axios';
+import { mapToGeolocationResponse } from '../location.mapper';
+// Constants
+import { API_KEY_OPEN_WEATHER } from '../../shared/constants/environment.const';
 
 const GEOLOCATION_BASE_URL = "http://api.openweathermap.org/geo/1.0";
 

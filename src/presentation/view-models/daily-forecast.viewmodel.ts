@@ -19,7 +19,6 @@ export class DailyForecastVM {
     this.humidity = humidity;
   }
 
-
   getRoundedTemp() {
     return Math.round(this.temp);
   }
