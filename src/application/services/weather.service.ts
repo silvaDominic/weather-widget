@@ -11,20 +11,10 @@ const API_VERSION = "2.5";
 const BASE_URL = `https://api.openweathermap.org/data/${API_VERSION}`;
 
 export const WeatherService: IWeatherService = {
-    async getForecast(zipcode): Promise<ForecastModel> {
+    async getForecastByZipcode(zipcode): Promise<ForecastModel> {
         try {
             const geoResponse: IGeolocationResponse = await GeoLocationService.getGeolocationByZipcode(zipcode);
-            const params = {
-                units: UNIT.IMPERIAL,
-                lat: geoResponse.latitude,
-                lon: geoResponse.longitude,
-                appid: API_KEY_OPEN_WEATHER
-            }
-            const weatherResponse = await axios.get(`${BASE_URL}/onecall`, { params });
-
-            let forecastModel: ForecastModel = mapToForecastModel(weatherResponse.data);
-            forecastModel.displayLocation = geoResponse.displayLocation;
-            return forecastModel;
+            return await this.getForecast(geoResponse);
         } catch (err) {
             console.log("WEATHER SERVICE ERR: ", err);
             throw err;
@@ -33,6 +23,10 @@ export const WeatherService: IWeatherService = {
 
     async getLocalForecast(): Promise<ForecastModel> {
         const geoResponse: IGeolocationResponse = await GeoLocationService.getCurrentLocationCoords();
+        return await this.getForecast(geoResponse);
+    },
+
+    async getForecast(geoResponse: IGeolocationResponse) {
         const params = {
             units: UNIT.IMPERIAL,
             lat: geoResponse.latitude,

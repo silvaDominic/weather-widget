@@ -1,4 +1,8 @@
+import { IGeolocationResponse } from './models/geo-response.interface';
+import { ForecastModel } from './models/forecast.model';
+
 export interface IWeatherService {
-  getForecast(zipcode: string): Promise<any>,
-  getLocalForecast(): Promise<any>,
+  getForecastByZipcode(zipcode: string): Promise<ForecastModel>,
+  getLocalForecast(): Promise<ForecastModel>,
+  getForecast(geoResponse: IGeolocationResponse): Promise<ForecastModel>
 }
