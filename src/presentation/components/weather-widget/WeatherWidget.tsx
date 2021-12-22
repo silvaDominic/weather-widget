@@ -109,7 +109,9 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
 
   function setDailyWeather(day: string): void {
     setActiveDay(day);
-    setTodaysWeatherDetail(weeklyWeather.find((weather: DailyForecastVM) => weather.getDay() === day) || new DailyForecastVM())
+    // Get DailyForecast object based on day and set TodaysWeatherDetail with it
+    const dailyForecast = weeklyWeather.find((weather: DailyForecastVM) => weather.getDay() === day);
+    setTodaysWeatherDetail(dailyForecast || new DailyForecastVM());
   }
 
   /**
