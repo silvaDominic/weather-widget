@@ -1,16 +1,15 @@
 import { IWeatherService } from '../../../application/IWeatherService';
-import { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
-import { TodaysWeatherViewmodel } from '../../view-models/todays-weather.viewmodel';
+import { TodaysForecastVM } from '../../view-models/todays-forecast.viewmodel';
 import { ForecastModel } from '../../../application/models/forecast.model';
-import { HourlyWeatherViewmodel } from '../../view-models/hourly-weather.viewmodel';
-import { TodaysWeatherDetailViewmodel } from '../../view-models/todays-weather-detail.viewmodel';
-import { capitalize, unixToDay, unixToHour } from '../../../shared/utils/general.util';
-import { DailyWeatherViewmodel } from '../../view-models/daily-weather.viewmodel';
+import { HourlyForecastVM } from '../../view-models/hourly-forecast.viewmodel';
+import { DailyForecastVM } from '../../view-models/daily-forecast.viewmodel';
+import { capitalize, unixToDay } from '../../../shared/utils/general.util';
 import {
-  mapToDailyForecast,
+  mapToTodaysWeatherDetailVM,
   mapToHourlyForecast,
-  mapToTodaysWeatherForecast,
+  mapToTodaysForecastVM,
   mapToWeeklyForecast
 } from '../../forecast.mapper';
 import { DailyForecastItem } from '../daily-forecast-item/DailyForecastItem';
@@ -18,12 +17,14 @@ import { HourlyForecastItem } from '../hourly-forecast-item/HourlyForecastItem';
 import './WeatherWidget.css';
 
 export function WeatherWidget({weatherService}: { weatherService: IWeatherService }) {
+  const [activeDay, setActiveDay] = useState("");
+  const [location, setLocation] = useState("");
   const [day, setDay] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [todaysWeather, setTodaysWeather] = useState(new TodaysWeatherViewmodel());
-  const [hourlyWeather, setHourlyWeather] = useState(new Array<HourlyWeatherViewmodel>());
-  const [weeklyWeather, setWeeklyWeather] = useState(new Array<DailyWeatherViewmodel>());
-  const [todaysWeatherDetail, setTodaysWeatherDetail] = useState(new TodaysWeatherDetailViewmodel());
+  const [todaysWeather, setTodaysWeather] = useState(new TodaysForecastVM());
+  const [hourlyWeather, setHourlyWeather] = useState(new Array<HourlyForecastVM>());
+  const [weeklyWeather, setWeeklyWeather] = useState(new Array<DailyForecastVM>());
+  const [todaysWeatherDetail, setTodaysWeatherDetail] = useState(new DailyForecastVM());
 
   useEffect(() => {
     weatherService.getLocalForecast()
@@ -38,12 +39,16 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
     <div id="weather-widget-container" className="container">
       <div id="header-container" className="flex-space-between">
         <div id="todays-weather-brief-container" className="">
+          <h1>Now</h1>
           <h1>{todaysWeather.getRoundedTemp()}F</h1>
           <div>Wind: {todaysWeather.getRoundedWindSpeed()} mph</div>
           <div> Humidity: {todaysWeather.humidity}%</div>
         </div>
 
-        <h1>{day}</h1>
+        <div className="text-center">
+          <h1>{location}</h1>
+          <h2>{day}</h2>
+        </div>
 
         <div id="form-container">
           <form id="location-form" onSubmit={searchLocation}>
@@ -71,11 +76,12 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
       <div id="weekly-weather-container" className="flex-center">
         {
           weeklyWeather.map(dailyWeather => (
-            <Fragment key={dailyWeather.day}>
+            <Fragment key={dailyWeather.date}>
               <DailyForecastItem
-                day={dailyWeather.day}
-                highTemp={dailyWeather.getRoundedHighTemp()}
-                lowTemp={dailyWeather.getRoundedLowTemp()}/>
+                dailyForecastVM={dailyWeather}
+                selectedDay={activeDay}
+                clickHandler={() => getWeather(dailyWeather.getDay())}
+              />
             </Fragment>
           ))
         }
@@ -96,11 +102,17 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
   );
 
   function updateForecast(weatherData: ForecastModel) {
+    setLocation(weatherData.displayLocation);
     setDay(unixToDay(weatherData.dailyWeather.date));
     setHourlyWeather(mapToHourlyForecast(weatherData.hourlyWeather));
     setWeeklyWeather(mapToWeeklyForecast(weatherData.weeklyWeather));
-    setTodaysWeather(mapToTodaysWeatherForecast(weatherData.dailyWeather));
-    setTodaysWeatherDetail(mapToDailyForecast(weatherData.dailyWeather));
+    setTodaysWeather(mapToTodaysForecastVM(weatherData.dailyWeather));
+    setTodaysWeatherDetail(mapToTodaysWeatherDetailVM(weatherData.dailyWeather));
+  }
+
+  function getWeather(day: string): void {
+    setActiveDay(day);
+    setTodaysWeatherDetail(weeklyWeather.find((weather: DailyForecastVM) => weather.getDay() === day) || new DailyForecastVM())
   }
 
   async function searchLocation(formEvent: any) {
@@ -113,7 +125,7 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
     let { zipcode } = Object.fromEntries(form);
 
     // request data and setup viewmodels
-    weatherService.getForecast(zipcode.toString()) // Data converted from File | string --> string
+    weatherService.getForecastByZipcode(zipcode.toString()) // Data converted from File | string --> string
       .then((weatherData: ForecastModel) => {
         updateForecast(weatherData);
         // formEvent.target.reset();

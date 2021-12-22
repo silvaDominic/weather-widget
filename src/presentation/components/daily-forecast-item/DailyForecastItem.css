@@ -1,13 +1,19 @@
 .daily-list-item {
     text-align: center;
     padding: 0.25rem;
-    margin: 0.5rem;
-    transition: background-color 0.2s;
+    margin: 0.5rem 1rem;
+    transition: background-color 0.25s, border 0.25s;
     border-radius: 0.5rem;
+    border: 2px solid transparent;
+}
+
+.daily-list-item.active {
+    background-color: lightslategray !important;
+    color: white;
 }
 
 .daily-list-item:hover {
-    background-color: lightgray;
+    border: 2px solid lightslategray;
     cursor: pointer;
 }
 

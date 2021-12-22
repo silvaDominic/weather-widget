@@ -20,3 +20,12 @@ code {
 .flex-grow {
   flex-grow: 1;
 }
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.text-center {
+  text-align: center;
+}
