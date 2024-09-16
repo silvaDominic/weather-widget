@@ -48,22 +48,42 @@ export const GeoLocationService: IGeolocationService = {
 
 async function getLocationByCoords(latitude: number, longitude: number): Promise<IGeolocationResponse> {
   const params: PlainObject = {
-  lat: latitude,
-  lon: longitude,
-  limit: 1, // Prefer the first result since we cannot vet the response for correctness
-  appid: API_KEY_OPEN_WEATHER,
+    lat: latitude,
+    lon: longitude,
+    limit: 1, // Prefer the first result since we cannot vet the response for correctness
+    appid: API_KEY_OPEN_WEATHER,
+  }
+  return axios.get(`${GEOLOCATION_BASE_URL}/reverse`, {params})
+    .then(res => {
+      if (!res.data.length) {
+        throw new Error("The provided location cannot be found");
+      }
+      return mapToGeolocationResponse(res.data[0]);
+    })
+    .catch(err => {
+      console.log("GEO-SERVICE: ", err);
+      throw err;
+    })
 }
-return axios.get(`${GEOLOCATION_BASE_URL}/reverse`, {params})
-  .then(res => {
-    if (!res.data.length) {
-      throw new Error("The provided location cannot be found");
-    }
-    return mapToGeolocationResponse(res.data[0]);
-  })
-  .catch(err => {
-    console.log("GEO-SERVICE: ", err);
-    throw err;
-  })
+
+async function getLocationByCity(city: string): Promise<IGeolocationResponse> {
+  const params: PlainObject = {
+    q: city,
+    limit: 1,
+    appid: API_KEY_OPEN_WEATHER,
+  }
+
+  return axios.get(`${GEOLOCATION_BASE_URL}/direct`, {params})
+    .then(res => {
+      if (!res.data.length) {
+        throw new Error("The provided location cannot be found");
+      }
+      return mapToGeolocationResponse(res.data[0]);
+    })
+    .catch(err => {
+      console.log("GEO-SERVICE: ", err);
+      throw err;
+    });
 }
 
 function isValidParams(zipcode: string): boolean {
