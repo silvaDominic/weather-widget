@@ -43,7 +43,27 @@ export const GeoLocationService: IGeolocationService = {
     } else {
       throw new Error("City and/or country must be valid strings");
     }
-  }
+  },
+
+  async getGeolocationByCity(city: string): Promise<IGeolocationResponse> {
+    const params: PlainObject = {
+      q: city,
+      limit: 1,
+      appid: API_KEY_OPEN_WEATHER,
+    }
+
+    return axios.get(`${GEOLOCATION_BASE_URL}/direct`, {params})
+      .then(res => {
+        if (!res.data.length) {
+          throw new Error("The provided location cannot be found");
+        }
+        return mapToGeolocationResponse(res.data[0]);
+      })
+      .catch(err => {
+        console.log("GEO-SERVICE: ", err);
+        throw err;
+      });
+  },
 }
 
 async function getLocationByCoords(latitude: number, longitude: number): Promise<IGeolocationResponse> {
@@ -64,26 +84,6 @@ async function getLocationByCoords(latitude: number, longitude: number): Promise
       console.log("GEO-SERVICE: ", err);
       throw err;
     })
-}
-
-async function getLocationByCity(city: string): Promise<IGeolocationResponse> {
-  const params: PlainObject = {
-    q: city,
-    limit: 1,
-    appid: API_KEY_OPEN_WEATHER,
-  }
-
-  return axios.get(`${GEOLOCATION_BASE_URL}/direct`, {params})
-    .then(res => {
-      if (!res.data.length) {
-        throw new Error("The provided location cannot be found");
-      }
-      return mapToGeolocationResponse(res.data[0]);
-    })
-    .catch(err => {
-      console.log("GEO-SERVICE: ", err);
-      throw err;
-    });
 }
 
 function isValidZipcode(zipcode: string | undefined): boolean {
