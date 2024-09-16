@@ -26,7 +26,7 @@ export const GeoLocationService: IGeolocationService = {
   },
 
   async getGeolocationByZipcode(zipcode: string): Promise<IGeolocationResponse> {
-    if (isValidParams(zipcode)) {
+    if (isValidZipcode(zipcode)) {
       const params: PlainObject = {
         zip: zipcode,
         appid: API_KEY_OPEN_WEATHER,
@@ -86,7 +86,7 @@ async function getLocationByCity(city: string): Promise<IGeolocationResponse> {
     });
 }
 
-function isValidParams(zipcode: string): boolean {
+function isValidZipcode(zipcode: string | undefined): boolean {
   // Check if zipcode contains only digits
   return zipcode !== undefined && /^[0-9]+$/.test(zipcode);
 }
