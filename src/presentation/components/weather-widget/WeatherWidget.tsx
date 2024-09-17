@@ -3,21 +3,11 @@ import Swal from 'sweetalert2';
 import './WeatherWidget.css';
 // Models
 import { IWeatherService } from '../../../application/models/weather-service.interface';
-import { TodaysForecastVM } from '../../view-models/todays-forecast.viewmodel';
-import { ForecastModel } from '../../../application/models/forecast.model';
-import { HourlyForecastVM } from '../../view-models/hourly-forecast.viewmodel';
-import { DailyForecastVM } from '../../view-models/daily-forecast.viewmodel';
 // Helpers
 import { capitalize, unixToDay } from '../../../shared/utils/general.util';
-import {
-  mapToTodaysWeatherDetailVM,
-  mapToHourlyForecast,
-  mapToTodaysForecastVM,
-  mapToWeeklyForecast
-} from '../../forecast.mapper';
 // Comps
-import { DailyForecastItem } from '../daily-forecast-item/DailyForecastItem';
-import { HourlyForecastItem } from '../hourly-forecast-item/HourlyForecastItem';
+import { HourlyWeatherItem } from '../hourly-forecast-item/HourlyWeatherItem';
+import { DailyWeatherModel } from "../../../application/models/daily-weather.model";
 
 export function WeatherWidget({weatherService}: { weatherService: IWeatherService }) {
   // Comp state
@@ -27,16 +17,30 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
   const [isSearching, setIsSearching] = useState(false);
 
   // Data state
-  const [todaysWeather, setTodaysWeather] = useState(new TodaysForecastVM());
-  const [hourlyWeather, setHourlyWeather] = useState(new Array<HourlyForecastVM>());
-  const [weeklyWeather, setWeeklyWeather] = useState(new Array<DailyForecastVM>());
-  const [todaysWeatherDetail, setTodaysWeatherDetail] = useState(new DailyForecastVM());
+  const [currentWeather, setCurrentWeather] = useState<DailyWeatherModel>(new DailyWeatherModel());
+  const [hourlyWeather, setHourlyWeather] = useState<DailyWeatherModel[]>([]);
+
+  function getRoundedTemp(temp: number): number {
+    return Math.round(temp);
+  }
+
+  function getRoundedWindSpeed(windSpeed: number): number {
+    return Math.round(windSpeed);
+  }
+
+  function getRoundedHighTemp(temp: number): number {
+    return Math.round(temp);
+  }
+
+  function getRoundedLowTemp(temp: number): number {
+    return Math.round(temp);
+  }
 
   useEffect(() => {
-    weatherService.getLocalForecast()
-      .then((weatherData: ForecastModel)  => {
+    weatherService.getCurrentWeatherByCurrentLocation()
+      .then((weatherData: DailyWeatherModel)  => {
         if (weatherData) {
-          updateForecast(weatherData);
+          setCurrentWeather(weatherData);
         }
       });
   }, []);
@@ -46,14 +50,14 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
       <div id="header-container" className="flex-space-between">
         <div id="todays-weather-brief-container" className="">
           <h1>Now</h1>
-          <h1>{todaysWeather.getRoundedTemp()}F</h1>
-          <div>Wind: {todaysWeather.getRoundedWindSpeed()} mph</div>
-          <div>Humidity: {todaysWeather.humidity}%</div>
+          <h1>{getRoundedTemp(currentWeather.temp)}F</h1>
+          <div>Wind: {getRoundedWindSpeed(currentWeather.windSpeed)} mph</div>
+          <div>Humidity: {currentWeather.humidity}%</div>
         </div>
 
         <div className="text-center">
-          <h1>{location}</h1>
-          <h2>{day}</h2>
+          <h1>{currentWeather.location}</h1>
+          <h2>{unixToDay(currentWeather.date, true)}</h2>
         </div>
 
         <div id="form-container">
@@ -70,24 +74,10 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
       <div id="hourly-weather-container" className="flex-center">
         {
           hourlyWeather.map(hourlyWeather => (
-            <Fragment key={hourlyWeather.hour}>
-              <HourlyForecastItem
-                hour={hourlyWeather.hour}
-                temp={hourlyWeather.getRoundedTemp()}/>
-            </Fragment>
-          ))
-        }
-      </div>
-
-      <div id="weekly-weather-container" className="flex-center">
-        {
-          weeklyWeather.map(dailyWeather => (
-            <Fragment key={dailyWeather.date}>
-              <DailyForecastItem
-                dailyForecastVM={dailyWeather}
-                selectedDay={activeDay}
-                clickHandler={() => setDailyWeather(dailyWeather.getDay())}
-              />
+            <Fragment key={hourlyWeather.date}>
+              <HourlyWeatherItem
+                hour={hourlyWeather.date}
+                temp={hourlyWeather.temp}/>
             </Fragment>
           ))
         }
@@ -95,24 +85,24 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
 
       <div id="daily-weather-detail-container">
         <div>
-          <h3>{capitalize(todaysWeatherDetail.description)}</h3>
-          <p>The high will be {todaysWeatherDetail.getRoundedHighTemp()}F, the low will
-            be {todaysWeatherDetail.getRoundedLowTemp()}F.</p>
+          <h3>{capitalize(currentWeather.description)}</h3>
+          <p>The high will be {getRoundedHighTemp(currentWeather.maxTemp)}F, the low will
+            be {getRoundedLowTemp(currentWeather.minTemp)}F.</p>
         </div>
 
-        <div>Wind: {todaysWeatherDetail.getRoundedWindSpeed()} mph</div>
-        <div>Humidity: {todaysWeatherDetail.humidity}%</div>
+        <div>Wind: {getRoundedWindSpeed(currentWeather.windSpeed)} mph</div>
+        <div>Humidity: {currentWeather.humidity}%</div>
       </div>
 
     </div>
   );
 
-  function setDailyWeather(day: string): void {
-    setActiveDay(day);
-    // Get DailyForecast object based on day and set TodaysWeatherDetail with it
-    const dailyForecast = weeklyWeather.find((weather: DailyForecastVM) => weather.getDay() === day);
-    setTodaysWeatherDetail(dailyForecast || new DailyForecastVM());
-  }
+  // function setDailyWeather(day: string): void {
+  //   setActiveDay(day);
+  //   // Get DailyForecast object based on day and set TodaysWeatherDetail with it
+  //   const dailyForecast = weeklyWeather.find((weather: DailyForecastVM) => weather.getDay() === day);
+  //   setTodaysWeatherDetail(dailyForecast || new DailyForecastVM());
+  // }
 
   /**
    * Searches location based on data acquired from search form
@@ -128,9 +118,9 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
     let { zipcode } = Object.fromEntries(form);
 
     // Request data and setup viewmodels
-    weatherService.getForecastByZipcode(zipcode.toString()) // Data converted from File | string --> string
-      .then((weatherData: ForecastModel) => {
-        updateForecast(weatherData);
+    weatherService.getCurrentWeatherByZipcode(zipcode.toString()) // Data converted from File | string --> string
+      .then((weatherData: DailyWeatherModel) => {
+        setCurrentWeather(weatherData);
         formEvent.target.reset();
       })
       .catch(err => {
@@ -144,19 +134,5 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
         // Enable search after request has completed
         setIsSearching(false);
       });
-  }
-
-  /**
-   * Updates entire state when making weather requests
-   * @param weatherData
-   */
-  function updateForecast(weatherData: ForecastModel) {
-    setLocation(weatherData.displayLocation);
-    setActiveDay(unixToDay(weatherData.dailyWeather.date, true));
-    setDay(unixToDay(weatherData.dailyWeather.date));
-    setHourlyWeather(mapToHourlyForecast(weatherData.hourlyWeather));
-    setWeeklyWeather(mapToWeeklyForecast(weatherData.weeklyWeather));
-    setTodaysWeather(mapToTodaysForecastVM(weatherData.dailyWeather));
-    setTodaysWeatherDetail(mapToTodaysWeatherDetailVM(weatherData.dailyWeather));
   }
 }
