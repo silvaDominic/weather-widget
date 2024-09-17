@@ -1,39 +1,31 @@
 import { DailyWeatherModel } from "./models/daily-weather.model";
 import { PlainObject } from '../shared/interfaces/plain-object';
-import { HourlyWeatherModel } from './models/hour-weather.model';
-import { ForecastModel } from './models/forecast.model';
 
-export function mapToForecastModel(dto: PlainObject, displayLocation: string): ForecastModel {
-    let hourlyWeatherModel: HourlyWeatherModel[];
-    let weeklyWeatherModel: DailyWeatherModel[];
+export function mapFiveDayHourlyWeatherModel(dto: PlainObject): DailyWeatherModel[] {
+    let fiveDayHourlyWeatherModel: DailyWeatherModel[];
 
     if (dto) {
-        hourlyWeatherModel = dto.hourly.map((hourlyWeather: PlainObject) => {
-            return mapToHourlyWeatherModel(hourlyWeather);
-        }).slice(0, 5); // Only need the first 6 hours of data
-        weeklyWeatherModel = dto.daily.map((dailyWeather: PlainObject) => {
-            return mapToWeatherModel(dailyWeather);
-        }).slice(0,7); // Only need the first 7 days of data
+        if (!Array.isArray(dto.list)) {
+            throw new Error('There is not weather data for the next 5 days.');
+        }
+        fiveDayHourlyWeatherModel = dto.list.map((weatherDatum: any) => mapToWeatherModel(weatherDatum));
     } else {
         throw new Error("No weather object returned with request");
     }
 
-    return new ForecastModel(hourlyWeatherModel, weeklyWeatherModel, displayLocation);
+    return fiveDayHourlyWeatherModel;
 }
 
-function mapToWeatherModel(dto: PlainObject): DailyWeatherModel {
+export function mapToWeatherModel(dto: PlainObject, displayLocation?: string): DailyWeatherModel {
     let weatherModel = new DailyWeatherModel();
+    weatherModel.location = displayLocation || "";
     weatherModel.date = dto.dt;
     weatherModel.description = dto.weather[0].description;
-    weatherModel.temp = dto.temp.day;
-    weatherModel.maxTemp = dto.temp.max;
-    weatherModel.minTemp = dto.temp.min;
-    weatherModel.humidity = dto.humidity;
-    weatherModel.windSpeed = dto.wind_speed;
+    weatherModel.temp = dto?.main?.temp;
+    weatherModel.maxTemp = dto?.main?.temp_max;
+    weatherModel.minTemp = dto?.main?.temp_min;
+    weatherModel.humidity = dto?.main?.humidity;
+    weatherModel.windSpeed = dto?.wind?.speed;
 
     return weatherModel;
-}
-
-function mapToHourlyWeatherModel(dto: PlainObject): HourlyWeatherModel {
-    return new HourlyWeatherModel(dto.dt, dto.temp);
 }
