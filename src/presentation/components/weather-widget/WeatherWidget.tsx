@@ -71,15 +71,18 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
         </div>
       </div>
 
-      <div id="hourly-weather-container" className="flex-center">
+      <div id="hourly-weather-container" className="text-center">
+        <h2>Hourly Forecast</h2>
         {
-          hourlyWeather.map(hourlyWeather => (
+          (hourlyWeather.length !== 0)
+          ? hourlyWeather.map(hourlyWeather => (
             <Fragment key={hourlyWeather.date}>
               <HourlyWeatherItem
                 hour={hourlyWeather.date}
                 temp={hourlyWeather.temp}/>
             </Fragment>
           ))
+          : <div>No hourly data available.</div>
         }
       </div>
 
