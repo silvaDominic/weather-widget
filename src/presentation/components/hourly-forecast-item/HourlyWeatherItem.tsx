@@ -1,9 +1,13 @@
-import { IHourlyWeatherVM } from '../../view-models/hourly-forecast.viewmodel';
 import { unixToHour } from '../../../shared/utils/general.util';
 
 import './HourlyForecastItem.css'
 
-export function HourlyForecastItem({hour, temp}: IHourlyWeatherVM) {
+export type HourlyWeatherItemProps = {
+  hour: number,
+  temp: number,
+}
+
+export function HourlyWeatherItem({hour, temp}: HourlyWeatherItemProps) {
   return (
     <div className="hourly-list-item flex-grow">
       <div className="hourly-list-item-wrapper">
