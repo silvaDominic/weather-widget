@@ -15,14 +15,19 @@ export function useWeather(weatherService: IWeatherService): useWeatherReturnMod
   const [hourlyWeather, setHourlyWeather] = useState(new Array<DailyWeatherModel>());
 
   useEffect(() => {
-    weatherService.getHourlyWeatherByCurrentLocation().then(res => {
-      console.log("SETTING HOURLY WEATHER");
-      setHourlyWeather(res);
-    });
-    weatherService.getCurrentWeatherByCurrentLocation().then(res => {
-      console.log("SETTING CURRENT WEATHER");
-      setCurrentWeather(res);
-    });
+    async function getWeather(): Promise<void> {
+      weatherService.getHourlyWeatherByCurrentLocation().then(res => {
+        console.log("SETTING HOURLY WEATHER");
+        setHourlyWeather(res);
+      });
+      weatherService.getCurrentWeatherByCurrentLocation().then(res => {
+        console.log("SETTING CURRENT WEATHER");
+        setCurrentWeather(res);
+      });
+    }
+
+    getWeather()
+      .catch((err: any) => console.log(err));
   }, []);
 
   async function getWeatherByCityOrZipcode(query: string) {
