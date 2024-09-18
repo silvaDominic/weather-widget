@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { FormEvent, Fragment, useState } from 'react';
 import Swal from 'sweetalert2';
 import './WeatherWidget.css';
 // Models
@@ -8,6 +8,7 @@ import { capitalize, unixToDay } from '../../../shared/utils/general.util';
 // Comps
 import { HourlyWeatherItem } from '../hourly-forecast-item/HourlyWeatherItem';
 import { DailyWeatherModel } from "../../../application/models/daily-weather.model";
+import { useWeather } from "../../hooks/use-weather.hook";
 
 export function WeatherWidget({weatherService}: { weatherService: IWeatherService }) {
   // Comp state
@@ -15,10 +16,12 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
   const [location, setLocation] = useState("");
   const [day, setDay] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-
-  // Data state
-  const [currentWeather, setCurrentWeather] = useState<DailyWeatherModel>(new DailyWeatherModel());
-  const [hourlyWeather, setHourlyWeather] = useState<DailyWeatherModel[]>([]);
+  const {
+    currentWeather,
+    setCurrentWeather,
+    hourlyWeather,
+    getWeatherByCityOrZipcode
+  } = useWeather(weatherService);
 
   function getRoundedTemp(temp: number): number {
     return Math.round(temp);
@@ -35,15 +38,6 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
   function getRoundedLowTemp(temp: number): number {
     return Math.round(temp);
   }
-
-  useEffect(() => {
-    weatherService.getCurrentWeatherByCurrentLocation()
-      .then((weatherData: DailyWeatherModel)  => {
-        if (weatherData) {
-          setCurrentWeather(weatherData);
-        }
-      });
-  }, []);
 
   return (
     <div id="weather-widget-container" className="container">
@@ -63,7 +57,7 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
         <div id="form-container">
           <form id="location-form" onSubmit={searchLocation}>
             <div className="form-control">
-              <input placeholder="Zipcode" required id="zipcode-text-field" name="zipcode" type="text"/>
+              <input placeholder="Search by city or zipcode" required id="zipcode-text-field" name="location" type="text"/>
             </div>
 
             <button disabled={isSearching}>Search</button>
@@ -75,7 +69,7 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
         <h2>Hourly Forecast</h2>
         {
           (hourlyWeather.length !== 0)
-          ? hourlyWeather.map(hourlyWeather => (
+          ? hourlyWeather.map((hourlyWeather: DailyWeatherModel) => (
             <Fragment key={hourlyWeather.date}>
               <HourlyWeatherItem
                 hour={hourlyWeather.date}
@@ -111,31 +105,26 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
    * Searches location based on data acquired from search form
    * @param formEvent
    */
-  async function searchLocation(formEvent: any) {
+  async function searchLocation(formEvent: FormEvent<HTMLFormElement>) {
     // Disable search while searching
     setIsSearching(true);
-
     formEvent.preventDefault();
+    let form = formEvent.currentTarget;
     // Extract form data
-    const form = new FormData(formEvent.target);
-    let { zipcode } = Object.fromEntries(form);
+    const formData: FormData = new FormData(form);
+    const location: string = (formData.get('location') as String).trim().toLowerCase();
 
-    // Request data and setup viewmodels
-    weatherService.getCurrentWeatherByZipcode(zipcode.toString()) // Data converted from File | string --> string
-      .then((weatherData: DailyWeatherModel) => {
-        setCurrentWeather(weatherData);
-        formEvent.target.reset();
-      })
-      .catch(err => {
-        Swal.fire({
-          title: 'Search Error',
-          text: err,
-          icon: 'error',
-        });
-      })
-      .finally(() => {
-        // Enable search after request has completed
-        setIsSearching(false);
+    try {
+      await getWeatherByCityOrZipcode(location);
+      form.reset();
+    } catch (err: any) {
+      await Swal.fire({
+        title: 'Search Error',
+        text: err,
+        icon: 'error',
       });
+    }
+
+    setIsSearching(false);
   }
 }
