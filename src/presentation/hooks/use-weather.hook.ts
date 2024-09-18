@@ -29,7 +29,7 @@ export function useWeather(): useWeatherReturnModel {
 
   async function getWeatherByCityOrZipcode(query: string) {
     if (/^\d{5}$/.test(query)) { // zipcode check
-      WeatherService.getWeatherByZipcode(query).then(res => setCurrentWeather(res));
+      WeatherService.getCurrentWeatherByZipcode(query).then(res => setCurrentWeather(res));
       WeatherService.getHourlyWeatherByZipcode(query).then(res => setHourlyWeather(res));
     } else {
       WeatherService.getCurrentWeatherByCity(query).then(res => setCurrentWeather(res));

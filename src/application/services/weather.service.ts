@@ -32,7 +32,7 @@ export const WeatherService: IWeatherService = {
     }
   },
 
-  async getWeatherByZipcode(zipcode: string): Promise<DailyWeatherModel> {
+  async getCurrentWeatherByZipcode(zipcode: string): Promise<DailyWeatherModel> {
     try {
       const geoRes: IGeolocationResponse = await GeolocationService.getGeolocationByZipcode(zipcode);
       return await getCurrentWeather(geoRes);
