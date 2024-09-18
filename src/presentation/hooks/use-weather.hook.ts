@@ -2,6 +2,7 @@ import { DailyWeatherModel } from "../../application/models/daily-weather.model"
 import { useEffect, useState } from "react";
 
 import { WeatherService } from "../../application/services/weather.service";
+import { GeolocationService } from "../../application/services/geolocation.service";
 
 type useWeatherReturnModel = {
   currentWeather: DailyWeatherModel,
@@ -17,6 +18,7 @@ export function useWeather(): useWeatherReturnModel {
 
   useEffect(() => {
     async function getWeather(): Promise<void> {
+      await GeolocationService.getLocation();
       WeatherService.getHourlyWeatherByCurrentLocation().then(res => {
         console.log("SETTING HOURLY WEATHER");
         setHourlyWeather(res);
