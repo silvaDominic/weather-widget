@@ -1,6 +1,7 @@
-import { IWeatherService } from "../../application/models/weather-service.interface";
 import { DailyWeatherModel } from "../../application/models/daily-weather.model";
 import { useEffect, useState } from "react";
+
+import { WeatherService } from "../../application/services/weather.service";
 
 type useWeatherReturnModel = {
   currentWeather: DailyWeatherModel,
@@ -10,17 +11,17 @@ type useWeatherReturnModel = {
   getWeatherByCityOrZipcode: (query: string) => Promise<any>,
 }
 
-export function useWeather(weatherService: IWeatherService): useWeatherReturnModel {
+export function useWeather(): useWeatherReturnModel {
   const [currentWeather, setCurrentWeather] = useState(new DailyWeatherModel());
   const [hourlyWeather, setHourlyWeather] = useState(new Array<DailyWeatherModel>());
 
   useEffect(() => {
     async function getWeather(): Promise<void> {
-      weatherService.getHourlyWeatherByCurrentLocation().then(res => {
+      WeatherService.getHourlyWeatherByCurrentLocation().then(res => {
         console.log("SETTING HOURLY WEATHER");
         setHourlyWeather(res);
       });
-      weatherService.getCurrentWeatherByCurrentLocation().then(res => {
+      WeatherService.getCurrentWeatherByCurrentLocation().then(res => {
         console.log("SETTING CURRENT WEATHER");
         setCurrentWeather(res);
       });
@@ -32,11 +33,11 @@ export function useWeather(weatherService: IWeatherService): useWeatherReturnMod
 
   async function getWeatherByCityOrZipcode(query: string) {
     if (/^\d{5}$/.test(query)) { // zipcode check
-      weatherService.getWeatherByZipcode(query).then(res => setCurrentWeather(res));
-      weatherService.getHourlyWeatherByZipcode(query).then(res => setHourlyWeather(res));
+      WeatherService.getWeatherByZipcode(query).then(res => setCurrentWeather(res));
+      WeatherService.getHourlyWeatherByZipcode(query).then(res => setHourlyWeather(res));
     } else {
-      weatherService.getCurrentWeatherByCity(query).then(res => setCurrentWeather(res));
-      weatherService.getHourlyWeatherByCity(query).then(res => setHourlyWeather(res));
+      WeatherService.getCurrentWeatherByCity(query).then(res => setCurrentWeather(res));
+      WeatherService.getHourlyWeatherByCity(query).then(res => setHourlyWeather(res));
     }
   }
 

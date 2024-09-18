@@ -1,8 +1,6 @@
 import React, { FormEvent, Fragment, useState } from 'react';
 import Swal from 'sweetalert2';
 import './WeatherWidget.css';
-// Models
-import { IWeatherService } from '../../../application/models/weather-service.interface';
 // Helpers
 import { capitalize, unixToDay } from '../../../shared/utils/general.util';
 // Comps
@@ -10,7 +8,7 @@ import { HourlyWeatherItem } from '../hourly-forecast-item/HourlyWeatherItem';
 import { DailyWeatherModel } from "../../../application/models/daily-weather.model";
 import { useWeather } from "../../hooks/use-weather.hook";
 
-export function WeatherWidget({weatherService}: { weatherService: IWeatherService }) {
+export function WeatherWidget() {
   // Comp state
   const [activeDay, setActiveDay] = useState("");
   const [location, setLocation] = useState("");
@@ -21,7 +19,7 @@ export function WeatherWidget({weatherService}: { weatherService: IWeatherServic
     setCurrentWeather,
     hourlyWeather,
     getWeatherByCityOrZipcode
-  } = useWeather(weatherService);
+  } = useWeather();
 
   function getRoundedTemp(temp: number): number {
     return Math.round(temp);
