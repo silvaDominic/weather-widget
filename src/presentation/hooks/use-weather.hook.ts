@@ -19,14 +19,8 @@ export function useWeather(): useWeatherReturnModel {
   useEffect(() => {
     async function getWeather(): Promise<void> {
       await GeolocationService.getLocation();
-      WeatherService.getHourlyWeatherByCurrentLocation().then(res => {
-        console.log("SETTING HOURLY WEATHER");
-        setHourlyWeather(res);
-      });
-      WeatherService.getCurrentWeatherByCurrentLocation().then(res => {
-        console.log("SETTING CURRENT WEATHER");
-        setCurrentWeather(res);
-      });
+      WeatherService.getHourlyWeatherByCurrentLocation().then(res => setHourlyWeather(res));
+      WeatherService.getCurrentWeatherByCurrentLocation().then(res => setCurrentWeather(res));
     }
 
     getWeather()
