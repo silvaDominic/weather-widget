@@ -3,7 +3,7 @@ import { IWeatherService } from '../models/weather-service.interface';
 import { IGeolocationResponse } from '../models/geo-response.interface';
 // Helpers
 import axios from 'axios';
-import { GeoLocationService } from "./geo-location.service";
+import { GeolocationService } from "./geolocation.service";
 import { mapFiveDayHourlyWeatherModel, mapToWeatherModel } from '../weather.mapper';
 // Constants
 import { API_KEY_OPEN_WEATHER } from "../../shared/constants/environment.const";
@@ -16,7 +16,7 @@ const BASE_URL = `https://api.openweathermap.org/data/${API_VERSION}`;
 export const WeatherService: IWeatherService = {
   async getCurrentWeatherByCurrentLocation(): Promise<DailyWeatherModel> {
     try {
-      const geoRes: IGeolocationResponse = await GeoLocationService.getLocation();
+      const geoRes: IGeolocationResponse = await GeolocationService.getLocation();
       return await getCurrentWeather(geoRes);
     } catch (err) {
       throw err;
@@ -25,7 +25,7 @@ export const WeatherService: IWeatherService = {
 
   async getHourlyWeatherByCurrentLocation(): Promise<DailyWeatherModel[]> {
     try {
-      const geoRes: IGeolocationResponse = await GeoLocationService.getLocation();
+      const geoRes: IGeolocationResponse = await GeolocationService.getLocation();
       return await getHourlyWeather(geoRes);
     } catch (err) {
       throw err;
@@ -34,7 +34,7 @@ export const WeatherService: IWeatherService = {
 
   async getWeatherByZipcode(zipcode: string): Promise<DailyWeatherModel> {
     try {
-      const geoRes: IGeolocationResponse = await GeoLocationService.getGeolocationByZipcode(zipcode);
+      const geoRes: IGeolocationResponse = await GeolocationService.getGeolocationByZipcode(zipcode);
       return await getCurrentWeather(geoRes);
     } catch (err) {
       throw err;
@@ -43,7 +43,7 @@ export const WeatherService: IWeatherService = {
 
   async getHourlyWeatherByZipcode(zipcode: string): Promise<DailyWeatherModel[]> {
     try {
-      const geoRes: IGeolocationResponse = await GeoLocationService.getGeolocationByZipcode(zipcode);
+      const geoRes: IGeolocationResponse = await GeolocationService.getGeolocationByZipcode(zipcode);
       return await getHourlyWeather(geoRes);
     } catch (err) {
       throw err;
@@ -52,7 +52,7 @@ export const WeatherService: IWeatherService = {
 
   async getCurrentWeatherByCity(city: string): Promise<DailyWeatherModel> {
     try {
-      const geoRes: IGeolocationResponse = await GeoLocationService.getGeolocationByCity(city);
+      const geoRes: IGeolocationResponse = await GeolocationService.getGeolocationByCity(city);
       return await getCurrentWeather(geoRes);
     } catch (err) {
       throw err;
@@ -61,7 +61,7 @@ export const WeatherService: IWeatherService = {
 
   async getHourlyWeatherByCity(city: string): Promise<DailyWeatherModel[]> {
     try {
-      const geoRes: IGeolocationResponse = await GeoLocationService.getGeolocationByCity(city);
+      const geoRes: IGeolocationResponse = await GeolocationService.getGeolocationByCity(city);
       return await getHourlyWeather(geoRes);
     } catch (err) {
       throw err;

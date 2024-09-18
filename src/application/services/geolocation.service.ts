@@ -10,19 +10,19 @@ import { IGeolocationService } from '../models/geolocation-service.interface';
 
 const GEOLOCATION_BASE_URL = "https://api.openweathermap.org/geo/1.0";
 
-export const GeoLocationService: IGeolocationService = {
+export const GeolocationService: IGeolocationService = {
   currLocation: undefined,
 
   async getLocation(): Promise<IGeolocationResponse> {
-    if (GeoLocationService.currLocation) {
-      return GeoLocationService.currLocation;
+    if (GeolocationService.currLocation) {
+      return GeolocationService.currLocation;
     }
 
     return new Promise((resolve, reject) => {
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(async (position: any) => {
           const location = await getLocationByCoords(position.coords.latitude, position.coords.longitude);
-          GeoLocationService.currLocation = location;
+          GeolocationService.currLocation = location;
           resolve(location);
         }, err => {
           reject(err);
