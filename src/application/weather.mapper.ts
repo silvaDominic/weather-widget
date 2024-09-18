@@ -2,30 +2,31 @@ import { DailyWeatherModel } from "./models/daily-weather.model";
 import { PlainObject } from '../shared/interfaces/plain-object';
 
 export function mapFiveDayHourlyWeatherModel(dto: PlainObject): DailyWeatherModel[] {
-    let fiveDayHourlyWeatherModel: DailyWeatherModel[];
+    let model: DailyWeatherModel[] = new Array<DailyWeatherModel>();
 
     if (dto) {
         if (!Array.isArray(dto.list)) {
-            throw new Error('There is not weather data for the next 5 days.');
+            throw new Error('There is no hourly weather data available');
         }
-        fiveDayHourlyWeatherModel = dto.list.map((weatherDatum: any) => mapToWeatherModel(weatherDatum));
+        for (let i = 0; i < 8; i++) {
+            model.push(mapToWeatherModel(dto.list[i]));
+        }
     } else {
         throw new Error("No weather object returned with request");
     }
-
-    return fiveDayHourlyWeatherModel;
+    return model;
 }
 
 export function mapToWeatherModel(dto: PlainObject, displayLocation?: string): DailyWeatherModel {
-    let weatherModel = new DailyWeatherModel();
-    weatherModel.location = displayLocation || "";
-    weatherModel.date = dto.dt;
-    weatherModel.description = dto.weather[0].description;
-    weatherModel.temp = dto?.main?.temp;
-    weatherModel.maxTemp = dto?.main?.temp_max;
-    weatherModel.minTemp = dto?.main?.temp_min;
-    weatherModel.humidity = dto?.main?.humidity;
-    weatherModel.windSpeed = dto?.wind?.speed;
+    let model = new DailyWeatherModel();
+    model.location = displayLocation || "";
+    model.date = dto.dt;
+    model.description = dto.weather[0].description;
+    model.temp = dto?.main?.temp;
+    model.maxTemp = dto?.main?.temp_max;
+    model.minTemp = dto?.main?.temp_min;
+    model.humidity = dto?.main?.humidity;
+    model.windSpeed = dto?.wind?.speed;
 
-    return weatherModel;
+    return model;
 }
