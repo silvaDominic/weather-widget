@@ -63,19 +63,21 @@ export function WeatherWidget() {
         </div>
       </div>
 
-      <div id="hourly-weather-container" className="text-center">
-        <h2>Hourly Forecast</h2>
-        {
-          (hourlyWeather.length !== 0)
-          ? hourlyWeather.map((hourlyWeather: DailyWeatherModel) => (
-            <Fragment key={hourlyWeather.date}>
-              <HourlyWeatherItem
-                hour={hourlyWeather.date}
-                temp={hourlyWeather.temp}/>
-            </Fragment>
-          ))
-          : <div>No hourly data available.</div>
-        }
+      <div id="hourly-weather-container">
+        <h2 className='text-center'>24 Hour Forecast</h2>
+        <div>
+          {
+            (hourlyWeather.length !== 0)
+              ? hourlyWeather.map((hourlyWeather: DailyWeatherModel) => (
+                <Fragment key={hourlyWeather.date}>
+                  <HourlyWeatherItem
+                    hour={hourlyWeather.date}
+                    temp={hourlyWeather.temp}/>
+                </Fragment>
+              ))
+              : <div>No hourly data available.</div>
+          }
+        </div>
       </div>
 
       <div id="daily-weather-detail-container">
