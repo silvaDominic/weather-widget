@@ -1,11 +1,10 @@
-import { IGeolocationResponse } from './geo-response.interface';
 import { DailyWeatherModel } from "./daily-weather.model";
 
 export interface IWeatherService {
-  currGeolocation: IGeolocationResponse | undefined,
-  getCurrentWeatherByZipcode(zipcode: string): Promise<DailyWeatherModel>,
   getCurrentWeatherByCurrentLocation(): Promise<DailyWeatherModel>,
+  getHourlyWeatherByCurrentLocation(): Promise<DailyWeatherModel[]>,
+  getWeatherByZipcode(zipcode: string): Promise<DailyWeatherModel>,
+  getHourlyWeatherByZipcode(zipcode: string): Promise<DailyWeatherModel[]>,
   getCurrentWeatherByCity(city: string): Promise<DailyWeatherModel>,
-  getHourlyFiveDayWeatherByZipcode(zipcode: string): Promise<DailyWeatherModel[]>,
-  getHourlyFiveDayWeatherByCity(city: string): Promise<DailyWeatherModel[]>,
+  getHourlyWeatherByCity(city: string): Promise<DailyWeatherModel[]>,
 }

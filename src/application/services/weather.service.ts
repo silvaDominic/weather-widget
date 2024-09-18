@@ -14,71 +14,90 @@ const API_VERSION = "2.5";
 const BASE_URL = `https://api.openweathermap.org/data/${API_VERSION}`;
 
 export const WeatherService: IWeatherService = {
-    currGeolocation: undefined,
+  async getCurrentWeatherByCurrentLocation(): Promise<DailyWeatherModel> {
+    try {
+      const geoRes: IGeolocationResponse = await GeoLocationService.getLocation();
+      return await getCurrentWeather(geoRes);
+    } catch (err) {
+      throw err;
+    }
+  },
 
-    async getCurrentWeatherByCurrentLocation(): Promise<DailyWeatherModel> {
-        try {
-            const geoRes: IGeolocationResponse = await GeoLocationService.getCurrentLocationCoords();
-            return await getCurrentWeather(geoRes);
-        } catch (err) {
-            throw err;
-        }
-    },
+  async getHourlyWeatherByCurrentLocation(): Promise<DailyWeatherModel[]> {
+    try {
+      const geoRes: IGeolocationResponse = await GeoLocationService.getLocation();
+      return await getHourlyWeather(geoRes);
+    } catch (err) {
+      throw err;
+    }
+  },
 
-    async getCurrentWeatherByZipcode(zipcode: string): Promise<DailyWeatherModel> {
-        try {
-            const geoRes: IGeolocationResponse = await GeoLocationService.getGeolocationByZipcode(zipcode);
-            return await getCurrentWeather(geoRes);
-        } catch (err) {
-            throw err;
-        }
-    },
+  async getWeatherByZipcode(zipcode: string): Promise<DailyWeatherModel> {
+    try {
+      const geoRes: IGeolocationResponse = await GeoLocationService.getGeolocationByZipcode(zipcode);
+      return await getCurrentWeather(geoRes);
+    } catch (err) {
+      throw err;
+    }
+  },
 
-    async getHourlyFiveDayWeatherByZipcode(zipcode: string): Promise<DailyWeatherModel[]> {
-        const geoRes: IGeolocationResponse = await GeoLocationService.getGeolocationByZipcode(zipcode);
-        return await getFiveDayForecast(geoRes);
-    },
+  async getHourlyWeatherByZipcode(zipcode: string): Promise<DailyWeatherModel[]> {
+    try {
+      const geoRes: IGeolocationResponse = await GeoLocationService.getGeolocationByZipcode(zipcode);
+      return await getHourlyWeather(geoRes);
+    } catch (err) {
+      throw err;
+    }
+  },
 
-    async getCurrentWeatherByCity(city: string): Promise<DailyWeatherModel> {
-        const geoRes: IGeolocationResponse = await GeoLocationService.getGeolocationByCity(city);
-        return await getCurrentWeather(geoRes)
-    },
+  async getCurrentWeatherByCity(city: string): Promise<DailyWeatherModel> {
+    try {
+      const geoRes: IGeolocationResponse = await GeoLocationService.getGeolocationByCity(city);
+      return await getCurrentWeather(geoRes);
+    } catch (err) {
+      throw err;
+    }
+  },
 
-    async getHourlyFiveDayWeatherByCity(city: string): Promise<DailyWeatherModel[]> {
-        const geoRes: IGeolocationResponse = await GeoLocationService.getGeolocationByZipcode(city);
-        return await getFiveDayForecast(geoRes);
-    },
+  async getHourlyWeatherByCity(city: string): Promise<DailyWeatherModel[]> {
+    try {
+      const geoRes: IGeolocationResponse = await GeoLocationService.getGeolocationByCity(city);
+      return await getHourlyWeather(geoRes);
+    } catch (err) {
+      throw err;
+    }
+  },
 }
 
-async function getFiveDayForecast(geoResponse: IGeolocationResponse): Promise<DailyWeatherModel[]> {
-    const params = {
-        units: UNIT.IMPERIAL,
-        lat: geoResponse.latitude,
-        lon: geoResponse.longitude,
-        exclude: "minutely,alerts",
-        appid: API_KEY_OPEN_WEATHER
-    }
-    try {
-        const weatherRes = await axios.get(`${BASE_URL}/forecast`, { params });
-        return mapFiveDayHourlyWeatherModel(weatherRes.data);
-    } catch (err) {
-        throw err;
-    }
+async function getHourlyWeather(geoResponse: IGeolocationResponse): Promise<DailyWeatherModel[]> {
+  const params = {
+    units: UNIT.IMPERIAL,
+    lat: geoResponse.latitude,
+    lon: geoResponse.longitude,
+    exclude: "minutely,alerts",
+    appid: API_KEY_OPEN_WEATHER
+  }
+  try {
+    const weatherRes = await axios.get(`${BASE_URL}/forecast`, {params});
+    return mapFiveDayHourlyWeatherModel(weatherRes.data);
+  } catch (err) {
+    throw err;
+  }
 }
 
 async function getCurrentWeather(geoResponse: IGeolocationResponse): Promise<DailyWeatherModel> {
-    const params = {
-        units: UNIT.IMPERIAL,
-        lat: geoResponse.latitude,
-        lon: geoResponse.longitude,
-        exclude: "minutely,alerts",
-        appid: API_KEY_OPEN_WEATHER
-    }
+  const params = {
+    units: UNIT.IMPERIAL,
+    lat: geoResponse.latitude,
+    lon: geoResponse.longitude,
+    exclude: "minutely,alerts",
+    appid: API_KEY_OPEN_WEATHER
+  }
 
-    try {
-        const res = await axios.get(`${BASE_URL}/weather`, {params});
-        return mapToWeatherModel(res.data, geoResponse.displayLocation);
-    } catch (err) {
-        throw err;
-    }
+  try {
+    const res = await axios.get(`${BASE_URL}/weather`, {params});
+    return mapToWeatherModel(res.data, geoResponse.displayLocation);
+  } catch (err) {
+    throw err;
+  }
 }
