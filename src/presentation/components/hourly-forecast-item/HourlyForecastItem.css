@@ -1,21 +1,9 @@
-.hourly-list-item {
-    text-align: center;
-    margin: 5rem 0.5rem;
+.list-group-item {
+    width: 100%;
 }
 
-.hourly-list-item .temp {
-    margin-top: 0;
-    font-size: 1.25em;
-}
-
-.hourly-list-item-wrapper {
-    width: 150px;
-    height: 150px;
-    background: lightskyblue;
-    border-radius: 50%;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+.list-group-item:hover {
+    background-color: lightgrey;
+    cursor: pointer;
+    transition: 0.25s background-color linear;
 }
