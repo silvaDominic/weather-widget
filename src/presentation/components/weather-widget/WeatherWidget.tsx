@@ -11,12 +11,12 @@ import { useWeather } from "../../hooks/use-weather.hook";
 export function WeatherWidget() {
   // Comp state
   const [selectedWeather, setSelectedWeather] = useState<DailyWeatherModel>(new DailyWeatherModel());
-  const [isSearching, setIsSearching] = useState(false);
   const {
     currentWeather,
     setCurrentWeather,
     hourlyWeather,
-    getWeatherByCityOrZipcode
+    getWeatherByCityOrZipcode,
+    isSearching,
   } = useWeather();
 
   useEffect(() => {
@@ -51,36 +51,46 @@ export function WeatherWidget() {
       </div>
 
       <div id="current-weather-container" className='my-3'>
-        <div className="row">
-          <div id="header-container" className="col-12">
-            <div className="text-center mb-3">
-              <span className='h3'>{currentWeather.location}</span>,
-              <span className='h3'>{unixToDay(currentWeather.date, true)}</span>
+        {
+          (!currentWeather)
+            ?
+            <div className="spinner-grow text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
             </div>
-          </div>
-        </div>
+            :
+            <>
+              <div className="row">
+                <div id="header-container" className="col-12">
+                  <div className="text-center mb-3">
+                    <span className='h3'>{currentWeather.location}</span>,
+                    <span className='h3'>{unixToDay(currentWeather.date, true)}</span>
+                  </div>
+                </div>
+              </div>
 
-        <div className="row align-items-center my-3">
-          <div id='weather-icon' className='col-3'>
-            <img src="" alt=""/>
-          </div>
+              <div className="row align-items-center my-3">
+                <div id='weather-icon' className='col-3'>
+                  <img src="" alt=""/>
+                </div>
 
-          <div id='current-weather-brief' className='col-3'>
-            <h3>Now</h3>
-            <div>{currentWeather.getRoundedTemp()}F</div>
-            <div>Wind: {formatWind(currentWeather.getRoundedWindSpeed(), 'mph', currentWeather.getCardinalDirection())}</div>
-            <div>Humidity: {currentWeather.humidity}%</div>
-          </div>
+                <div id='current-weather-brief' className='col-3'>
+                  <h3>Now</h3>
+                  <div>{currentWeather.getRoundedTemp()}F</div>
+                  <div>Wind: {formatWind(currentWeather.getRoundedWindSpeed(), 'mph', currentWeather.getCardinalDirection())}</div>
+                  <div>Humidity: {currentWeather.humidity}%</div>
+                </div>
 
-          <div id="daily-weather-detail-container" className='col-6'>
-            <h3>{capitalize(selectedWeather.description)}</h3>
-            <p>The high will be {selectedWeather.getRoundedMaxTemp()}F, the low will
-              be {selectedWeather.getRoundedMinTemp()}F.</p>
+                <div id="daily-weather-detail-container" className='col-6'>
+                  <h3>{capitalize(selectedWeather.description)}</h3>
+                  <p>The high will be {selectedWeather.getRoundedMaxTemp()}F, the low will
+                    be {selectedWeather.getRoundedMinTemp()}F.</p>
 
-            <div>Wind: {formatWind(currentWeather.getRoundedWindSpeed(), 'mph', currentWeather.getCardinalDirection())}</div>
-            <div>Humidity: {selectedWeather.humidity}%</div>
-          </div>
-        </div>
+                  <div>Wind: {formatWind(currentWeather.getRoundedWindSpeed(), 'mph', currentWeather.getCardinalDirection())}</div>
+                  <div>Humidity: {selectedWeather.humidity}%</div>
+                </div>
+              </div>
+            </>
+        }
       </div>
 
       <div id="hourly-weather-container" className='row'>
@@ -88,18 +98,26 @@ export function WeatherWidget() {
         <div className="col-12 my-3">
           <ul className='list-group list-group-horizontal'>
             {
-              (hourlyWeather.length !== 0)
-                ? hourlyWeather.map((hourlyWeather: DailyWeatherModel) => (
+              (!hourlyWeather)
+                ?
+                new Array(8).fill(null).map((_: any) => (
+                  <li className='list-group-item text-center'>
+                    <div className="spinner-grow text-primary" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  </li>
+                ))
+                :
+                hourlyWeather.map((hourlyWeather: DailyWeatherModel) => (
                   <Fragment
                     key={hourlyWeather.date}>
-                  <HourlyWeatherItem
+                    <HourlyWeatherItem
                       hour={hourlyWeather.date}
                       temp={hourlyWeather.getRoundedTemp()}
                       clickHandler={() => setCurrentWeather(hourlyWeather)}
                     />
                   </Fragment>
                 ))
-                : <div>No hourly data available.</div>
             }
           </ul>
         </div>
@@ -113,7 +131,6 @@ export function WeatherWidget() {
    */
   async function searchLocation(formEvent: FormEvent<HTMLFormElement>) {
     // Disable search while searching
-    setIsSearching(true);
     formEvent.preventDefault();
     let form = formEvent.currentTarget;
     // Extract form data
@@ -130,7 +147,5 @@ export function WeatherWidget() {
         icon: 'error',
       });
     }
-
-    setIsSearching(false);
   }
 }
