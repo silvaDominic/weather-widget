@@ -2,7 +2,7 @@ import React, { FormEvent, Fragment, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import './WeatherWidget.css';
 // Helpers
-import { capitalize, unixToDay } from '../../../shared/utils/general.util';
+import { capitalize, formatWind, unixToDay } from '../../../shared/utils/general.util';
 // Comps
 import { HourlyWeatherItem } from '../hourly-forecast-item/HourlyWeatherItem';
 import { DailyWeatherModel } from "../../../application/models/daily-weather.model";
@@ -24,22 +24,6 @@ export function WeatherWidget() {
       setSelectedWeather(currentWeather);
     }
   }, []);
-
-  function getRoundedTemp(temp: number): number {
-    return Math.round(temp);
-  }
-
-  function getRoundedWindSpeed(windSpeed: number): number {
-    return Math.round(windSpeed);
-  }
-
-  function getRoundedHighTemp(temp: number): number {
-    return Math.round(temp);
-  }
-
-  function getRoundedLowTemp(temp: number): number {
-    return Math.round(temp);
-  }
 
   function onHourlyWeatherClick(hourlyWeather: DailyWeatherModel) {
     setSelectedWeather(hourlyWeather);
@@ -83,17 +67,17 @@ export function WeatherWidget() {
 
           <div id='current-weather-brief' className='col-3'>
             <h3>Now</h3>
-            <div>{getRoundedTemp(currentWeather.temp)}F</div>
-            <div>Wind: {getRoundedWindSpeed(currentWeather.windSpeed)} mph</div>
+            <div>{currentWeather.getRoundedTemp()}F</div>
+            <div>Wind: {formatWind(currentWeather.getRoundedWindSpeed(), 'mph', currentWeather.getCardinalDirection())}</div>
             <div>Humidity: {currentWeather.humidity}%</div>
           </div>
 
           <div id="daily-weather-detail-container" className='col-6'>
             <h3>{capitalize(selectedWeather.description)}</h3>
-            <p>The high will be {getRoundedHighTemp(selectedWeather.maxTemp)}F, the low will
-              be {getRoundedLowTemp(selectedWeather.minTemp)}F.</p>
+            <p>The high will be {selectedWeather.getRoundedMaxTemp()}F, the low will
+              be {selectedWeather.getRoundedMinTemp()}F.</p>
 
-            <div>Wind: {getRoundedWindSpeed(selectedWeather.windSpeed)} mph</div>
+            <div>Wind: {formatWind(currentWeather.getRoundedWindSpeed(), 'mph', currentWeather.getCardinalDirection())}</div>
             <div>Humidity: {selectedWeather.humidity}%</div>
           </div>
         </div>
@@ -110,7 +94,7 @@ export function WeatherWidget() {
                     key={hourlyWeather.date}>
                   <HourlyWeatherItem
                       hour={hourlyWeather.date}
-                      temp={hourlyWeather.temp}
+                      temp={hourlyWeather.getRoundedTemp()}
                       clickHandler={() => setCurrentWeather(hourlyWeather)}
                     />
                   </Fragment>

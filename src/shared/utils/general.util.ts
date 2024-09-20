@@ -3,14 +3,6 @@ export function capitalize(str: string) {
     return str;
 }
 
-export function kelvinToFahrenheit(temp: number) {
-    return Math.round((temp - 273.15) * 9/5 + 32);
-}
-
-export function kelvinToCelsius(temp: number) {
-    return Math.round(temp - 273.15);
-}
-
 export function unixToDay(unixTimestamp: number, isShortHand: boolean = false) {
     const format = isShortHand ? "short" : "long";
     return new Date(unixTimestamp * 1000).toLocaleString("en-US", {weekday: format});
@@ -18,4 +10,8 @@ export function unixToDay(unixTimestamp: number, isShortHand: boolean = false) {
 
 export function unixToHour(unixTimestamp: number) {
     return new Date(unixTimestamp * 1000).toLocaleString("en-US", {hour: "numeric"});
+}
+
+export function formatWind(windSpeed: number, unit: string, direction: string): string {
+    return `${windSpeed}${unit}, ${direction}`;
 }

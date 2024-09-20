@@ -27,6 +27,7 @@ export function mapToWeatherModel(dto: PlainObject, displayLocation?: string): D
     model.minTemp = dto?.main?.temp_min;
     model.humidity = dto?.main?.humidity;
     model.windSpeed = dto?.wind?.speed;
+    model.windDirectionDegs = dto?.wind?.deg;
 
     return model;
 }
