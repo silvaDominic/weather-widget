@@ -68,7 +68,7 @@ export const GeolocationService: IGeolocationService = {
         return mapToGeolocationResponse(res.data[0]);
       })
       .catch(err => {
-        console.log("GEO-SERVICE: ", err);
+        console.error("GEO-SERVICE: ", err);
         throw err;
       });
   },
@@ -89,7 +89,7 @@ async function getLocationByCoords(latitude: number, longitude: number): Promise
       return mapToGeolocationResponse(res.data[0]);
     })
     .catch(err => {
-      console.log("GEO-SERVICE: ", err);
+      console.error("GEO-SERVICE: ", err);
       throw err;
     })
 }
