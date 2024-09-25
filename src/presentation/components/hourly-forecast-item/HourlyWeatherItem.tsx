@@ -1,4 +1,4 @@
-import { unixToHour } from '../../../shared/utils/general.util';
+import { unixToHour } from '@/shared/utils/general.util';
 
 import './HourlyForecastItem.css'
 

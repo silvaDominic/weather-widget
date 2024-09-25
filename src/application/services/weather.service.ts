@@ -6,8 +6,8 @@ import axios from 'axios';
 import { GeolocationService } from "./geolocation.service";
 import { mapFiveDayHourlyWeatherModel, mapToWeatherModel } from '../weather.mapper';
 // Constants
-import { API_KEY_OPEN_WEATHER } from "../../shared/constants/environment.const";
-import { UNIT } from '../../shared/enums/unit.enum';
+import { API_KEY_OPEN_WEATHER } from "@/shared/constants/environment.const";
+import { UNIT } from '@/shared/enums/unit.enum';
 import { DailyWeatherModel } from "../models/daily-weather.model";
 
 const API_VERSION = "2.5";

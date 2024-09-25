@@ -8,7 +8,7 @@
     "skipLibCheck": true,                     // Skip type checking of declaration files
     "forceConsistentCasingInFileNames": true, // Enforces consistent file naming
     "strict": true,                           // Enable all strict type-checking options
-    "baseUrl": "./src",                          // Base directory to resolve non-relative module names
+    "baseUrl": "./",                          // Base directory to resolve non-relative module names
     "paths": {
       "@/*": ["src/*"], // Allows for simpler imports using '@'
       "application/*": ["application/*"],

@@ -1,5 +1,5 @@
 import { DailyWeatherModel } from "./models/daily-weather.model";
-import { PlainObject } from '../shared/interfaces/plain-object';
+import { PlainObject } from '@/shared/interfaces/plain-object';
 
 export function mapFiveDayHourlyWeatherModel(dto: PlainObject): DailyWeatherModel[] {
     let model: DailyWeatherModel[] = new Array<DailyWeatherModel>();

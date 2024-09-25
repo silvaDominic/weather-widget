@@ -1,12 +1,12 @@
 // Models
-import { PlainObject } from '../../shared/interfaces/plain-object';
+import { PlainObject } from '@/shared/interfaces/plain-object';
 import { IGeolocationResponse } from '../models/geo-response.interface';
+import { IGeolocationService } from '../models/geolocation-service.interface';
 // Helpers
 import axios from 'axios';
 import { mapToGeolocationResponse } from '../location.mapper';
 // Constants
-import { API_KEY_OPEN_WEATHER } from '../../shared/constants/environment.const';
-import { IGeolocationService } from '../models/geolocation-service.interface';
+import { API_KEY_OPEN_WEATHER } from '@/shared/constants/environment.const';
 
 const GEOLOCATION_BASE_URL = "https://api.openweathermap.org/geo/1.0";
 

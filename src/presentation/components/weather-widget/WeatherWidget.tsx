@@ -2,10 +2,11 @@ import React, { FormEvent, Fragment, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import './WeatherWidget.css';
 // Helpers
-import { capitalize, formatWind, unixToDay } from '../../../shared/utils/general.util';
+import { capitalize, formatWind, unixToDay } from '@/shared/utils/general.util';
+// Models
+import { DailyWeatherModel } from "@/application/models/daily-weather.model";
 // Comps
 import { HourlyWeatherItem } from '../hourly-forecast-item/HourlyWeatherItem';
-import { DailyWeatherModel } from "../../../application/models/daily-weather.model";
 import { useWeather } from "../../hooks/use-weather.hook";
 
 export function WeatherWidget() {
