@@ -1,6 +1,7 @@
 // Models
 import { IWeatherService } from '../models/weather-service.interface';
 import { IGeolocationResponse } from '../models/geo-response.interface';
+import { DailyWeatherModel } from "../models/daily-weather.model";
 // Helpers
 import { HttpService } from '../services/http.service';
 import { GeolocationService } from "./geolocation.service";
@@ -8,7 +9,6 @@ import { mapFiveDayHourlyWeatherModel, mapToWeatherModel } from '../mappers/weat
 // Constants
 import { API_KEY_OPEN_WEATHER } from "@/shared/constants/environment.const";
 import { UNIT } from '@/shared/enums/unit.enum';
-import { DailyWeatherModel } from "../models/daily-weather.model";
 
 const API_VERSION = "2.5";
 const BASE_URL = `https://api.openweathermap.org/data/${API_VERSION}`;
