@@ -1,9 +1,9 @@
-# Getting Started with Create React App
+# Getting Started with Vite
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with Vite.
 
 Install dependencies with `npm install`
-Run with `npm run start`
+Run with `npm run dev`
 
 A simple weather widget that displays a variety of weather details for either the current or a given location.
 
