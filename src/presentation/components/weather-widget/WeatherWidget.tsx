@@ -101,8 +101,8 @@ export function WeatherWidget() {
             {
               (!hourlyWeather)
                 ?
-                new Array(8).fill(null).map((_: any) => (
-                  <li className='list-group-item text-center'>
+                new Array(8).fill(null).map((_: any, index: number) => (
+                  <li key={index} className='list-group-item text-center'>
                     <div className="spinner-grow text-primary" role="status">
                       <span className="visually-hidden">Loading...</span>
                     </div>
