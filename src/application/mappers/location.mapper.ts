@@ -1,5 +1,5 @@
 import { PlainObject } from '@/shared/interfaces/plain-object';
-import { IGeolocationResponse } from './models/geo-response.interface';
+import { IGeolocationResponse } from '../models/geo-response.interface';
 
 export function mapToGeolocationResponse(dto: PlainObject): IGeolocationResponse {
     return {

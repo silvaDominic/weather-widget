@@ -4,7 +4,7 @@ import { IGeolocationResponse } from '../models/geo-response.interface';
 import { IGeolocationService } from '../models/geolocation-service.interface';
 // Helpers
 import axios from 'axios';
-import { mapToGeolocationResponse } from '../location.mapper';
+import { mapToGeolocationResponse } from '../mappers/location.mapper';
 // Constants
 import { API_KEY_OPEN_WEATHER } from '@/shared/constants/environment.const';
 
