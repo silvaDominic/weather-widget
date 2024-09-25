@@ -1,26 +1,20 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "target": "esnext",                      // Specify ECMAScript target version
+    "module": "esnext",                      // Specify module code generation
+    "jsx": "react-jsx",                      // Use react-jsx for React 17+
+    "moduleResolution": "node",               // Module resolution strategy
+    "esModuleInterop": true,                  // Enables emit interoperability between CommonJS and ES Modules
+    "skipLibCheck": true,                     // Skip type checking of declaration files
+    "forceConsistentCasingInFileNames": true, // Enforces consistent file naming
+    "strict": true,                           // Enable all strict type-checking options
+    "baseUrl": "./src",                          // Base directory to resolve non-relative module names
+    "paths": {
+      "@/*": ["src/*"], // Allows for simpler imports using '@'
+      "application/*": ["application/*"],
+      "presentation/*": ["presentation/*"]
+    }
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx"], // Include all .ts and .tsx files in src
+  "exclude": ["node_modules"]                 // Exclude node_modules
 }
