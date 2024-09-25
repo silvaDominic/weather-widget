@@ -3,7 +3,7 @@ import { PlainObject } from '@/shared/interfaces/plain-object';
 import { IGeolocationResponse } from '../models/geo-response.interface';
 import { IGeolocationService } from '../models/geolocation-service.interface';
 // Helpers
-import axios from 'axios';
+import { HttpService } from '../services/http.service';
 import { mapToGeolocationResponse } from '../mappers/location.mapper';
 // Constants
 import { API_KEY_OPEN_WEATHER } from '@/shared/constants/environment.const';
@@ -40,7 +40,7 @@ export const GeolocationService: IGeolocationService = {
         appid: API_KEY_OPEN_WEATHER,
       }
       try {
-        const res = await axios.get(`${GEOLOCATION_BASE_URL}/zip`, {params});
+        const res = await HttpService.get(`${GEOLOCATION_BASE_URL}/zip`, {params});
         if (!res.data) {
           throw new Error("The provided location cannot be found");
         }
@@ -60,7 +60,7 @@ export const GeolocationService: IGeolocationService = {
       appid: API_KEY_OPEN_WEATHER,
     }
 
-    return axios.get(`${GEOLOCATION_BASE_URL}/direct`, {params})
+    return HttpService.get(`${GEOLOCATION_BASE_URL}/direct`, {params})
       .then(res => {
         if (!res.data.length) {
           throw new Error("The provided location cannot be found");
@@ -81,7 +81,7 @@ async function getLocationByCoords(latitude: number, longitude: number): Promise
     limit: 1, // Prefer the first result since we cannot vet the response for correctness
     appid: API_KEY_OPEN_WEATHER,
   }
-  return axios.get(`${GEOLOCATION_BASE_URL}/reverse`, {params})
+  return HttpService.get(`${GEOLOCATION_BASE_URL}/reverse`, {params})
     .then(res => {
       if (!res.data.length) {
         throw new Error("The provided location cannot be found");

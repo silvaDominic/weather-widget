@@ -2,7 +2,7 @@
 import { IWeatherService } from '../models/weather-service.interface';
 import { IGeolocationResponse } from '../models/geo-response.interface';
 // Helpers
-import axios from 'axios';
+import { HttpService } from '../services/http.service';
 import { GeolocationService } from "./geolocation.service";
 import { mapFiveDayHourlyWeatherModel, mapToWeatherModel } from '../mappers/weather.mapper';
 // Constants
@@ -78,7 +78,7 @@ async function getHourlyWeather(geoResponse: IGeolocationResponse): Promise<Dail
     appid: API_KEY_OPEN_WEATHER
   }
   try {
-    const weatherRes = await axios.get(`${BASE_URL}/forecast`, {params});
+    const weatherRes = await HttpService.get(`${BASE_URL}/forecast`, {params});
     return mapFiveDayHourlyWeatherModel(weatherRes.data);
   } catch (err) {
     throw err;
@@ -95,7 +95,7 @@ async function getCurrentWeather(geoResponse: IGeolocationResponse): Promise<Dai
   }
 
   try {
-    const res = await axios.get(`${BASE_URL}/weather`, {params});
+    const res = await HttpService.get(`${BASE_URL}/weather`, {params});
     return mapToWeatherModel(res.data, geoResponse.displayLocation);
   } catch (err) {
     throw err;
